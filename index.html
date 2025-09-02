@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ZenTrack — Stress Detection & Therapy (Frontend)</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<style>
+  :root{
+    --bg:#071029; --panel:#0d1623; --muted:#94a3b8; --txt:#e6eef8;
+    --accent1:#7c3aed; --accent2:#22d3ee; --glass: rgba(255,255,255,0.03);
+    --ok:#10b981; --warn:#f59e0b; --bad:#ef4444;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:Inter,system-ui,Arial; background:
+    radial-gradient(800px 400px at 10% 10%, rgba(124,58,237,0.06), transparent),
+    linear-gradient(120deg, var(--bg), #051226); color:var(--txt); -webkit-font-smoothing:antialiased;
+  }
+  header{padding:18px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px;}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:grid;place-items:center;font-weight:800;color:#fff}
+  .title h1{margin:0;font-size:18px}
+  .title p{margin:4px 0 0;color:var(--muted);font-size:13px}
+  .main{max-width:1100px;margin:14px auto;padding:0 14px;display:grid;grid-template-columns:1fr 360px;gap:18px}
+  @media(max-width:980px){ .main{grid-template-columns:1fr} .aside{order:2} .content{order:1} }
+
+  /* Cards */
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,0.04); box-shadow:0 8px 30px rgba(2,6,23,0.6); }
+  h2{margin:0 0 8px 0}
+  p.muted{color:var(--muted);font-size:13px;margin:6px 0 10px}
+
+  /* form */
+  input[type=text], input[type=password], select, textarea{
+    width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background:transparent; color:var(--txt);
+    margin-bottom:10px; outline:none; transition:box-shadow .18s, border-color .18s;
+  }
+  input:focus, select:focus, textarea:focus{box-shadow:0 8px 30px rgba(34,211,238,0.06); border-color:rgba(34,211,238,0.3)}
+
+  button.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+  .btn.primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:white}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--txt)}
+
+  /* Stages (single-page flow) */
+  .stage{display:none}
+  .stage.active{display:block; animation:fadeIn .36s ease}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+
+  /* therapy options */
+  .grid{display:grid;grid-template-columns:1fr 1fr; gap:12px}
+  @media(max-width:720px){ .grid{grid-template-columns:1fr} }
+  .option{background:var(--glass); padding:12px;border-radius:10px; cursor:pointer; transition:transform .18s, box-shadow .18s}
+  .option:hover{transform:translateY(-6px); box-shadow:0 14px 40px rgba(2,6,23,0.6)}
+
+  /* right column */
+  .aside .card{margin-bottom:12px}
+  .pill{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:700}
+  .pill.low{background:rgba(16,185,129,0.12);color:var(--ok)}
+  .pill.mod{background:rgba(245,158,11,0.12);color:var(--warn)}
+  .pill.high{background:rgba(239,68,68,0.12);color:var(--bad)}
+
+  /* chat */
+  .chat-window{display:flex;flex-direction:column;gap:8px}
+  .messages{height:220px;overflow:auto;padding:8px;border-radius:8px;background:rgba(0,0,0,0.25)}
+  .msg{margin:6px 0;padding:8px;border-radius:8px;max-width:84%}
+  .msg.user{background:linear-gradient(90deg,#1f2937,#0b1320); margin-left:auto}
+  .msg.bot{background:linear-gradient(90deg,#0b1220,#071226); color:var(--muted)}
+
+  /* small helpers */
+  .muted-small{color:var(--muted); font-size:13px}
+  .center{display:flex;align-items:center;gap:8px}
+  .hidden{display:none}
+  footer{padding:20px;text-align:center;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo">Z</div>
+    <div class="title"><h1>ZenTrack</h1><p>Detect • Manage • Heal — Stress</p></div>
+  </div>
+  <div class="center">
+    <div id="signedAs" class="muted-small">Not signed in</div>
+    <button id="btnLogout" class="btn ghost hidden">Logout</button>
+  </div>
+</header>
+
+<main class="main">
+  <!-- content -->
+  <section class="content">
+    <!-- Stage 1: Auth -->
+    <div id="stage-auth" class="card stage active">
+      <h2>1. Login / Register</h2>
+      <p class="muted">Create an account or login. (Admin: <strong>admin@admin.com</strong> / <strong>adminpass</strong>)</p>
+
+      <input id="inputEmail" type="text" placeholder="Email" autocomplete="username" />
+      <input id="inputPass" type="password" placeholder="Password" autocomplete="current-password" />
+
+      <div style="display:flex;gap:8px;">
+        <button id="btnLogin" class="btn primary">Login</button>
+        <button id="btnRegister" class="btn ghost">Register</button>
+        <button id="btnGuest" class="btn ghost">Continue as Guest</button>
+      </div>
+
+      <p id="authMsg" class="muted-small"></p>
+    </div>
+
+    <!-- Stage 2: Questions -->
+    <div id="stage-questions" class="card stage">
+      <h2>2. Quick Assessment (3 questions)</h2>
+      <p class="muted">Answer the following to get a personalized stress report:</p>
+
+      <label class="muted-small">1) How well did you sleep last night?</label>
+      <select id="q_sleep">
+        <option value="">Select</option>
+        <option value="good">Good</option>
+        <option value="avg">Average</option>
+        <option value="poor">Poor</option>
+      </select>
+
+      <label class="muted-small">2) How is your current workload / studies?</label>
+      <select id="q_work">
+        <option value="">Select</option>
+        <option value="manageable">Manageable</option>
+        <option value="stressful">Stressful</option>
+        <option value="overwhelming">Overwhelming</option>
+      </select>
+
+      <label class="muted-small">3) How often do you feel anxious during the day?</label>
+      <select id="q_anx">
+        <option value="">Select</option>
+        <option value="rarely">Rarely</option>
+        <option value="sometimes">Sometimes</option>
+        <option value="often">Often</option>
+      </select>
+
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button id="btnAssess" class="btn primary">Get Report</button>
+        <button id="btnBackToAuth" class="btn ghost">Back</button>
+        <p>Hi</p>
+      </div>
+
+      <div id="assessmentResult" class="muted-small" style="margin-top:10px"></div>
+    </div>
+
+    <!-- Stage 3: Dashboard -->
+    <div id="stage-dashboard" class="card stage">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <div>
+          <h2 id="dashTitle">3. Dashboard</h2>
+          <div id="dashSubtitle" class="muted-small">Your personalized recommendations</div>
+        </div>
+        <div style="text-align:right">
+          <div class="muted-small">Latest status</div>
+          <div id="latestPill" class="pill low">No data</div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px" class="muted-small">
+        <strong>Treatment Advice:</strong> <span id="treatmentAdvice">—</span>
+      </div>
+
+      <hr style="border-color:rgba(255,255,255,0.03);margin:12px 0">
+
+      <div class="grid">
+        <div>
+          <h3 style="margin:6px 0">Chat Support</h3>
+          <div class="card" style="padding:8px">
+            <div class="chat-window">
+              <div id="chatMessages" class="messages" aria-live="polite"></div>
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <input id="chatInput" type="text" placeholder="Share how you feel..." />
+                <button id="chatSend" class="btn primary">Send</button>
+              </div>
+              <div class="muted-small" style="margin-top:8px">Tip: This demo uses a local rule-based assistant. Replace with server-side LLM in production.</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="margin:6px 0">Therapies</h3>
+          <div class="card" style="padding:10px">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <div class="option" id="playlistsPanel" style="flex:1 1 100%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="margin-top:12px">Stress Trend</h3>
+      <div class="card" style="padding:10px">
+        <canvas id="trendChart" height="160" aria-label="Stress trend chart"></canvas>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- aside -->
+  <aside class="aside">
+    <div class="card">
+      <h3>Quick Actions</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <button id="btnStartBreath" class="btn ghost">Start 4-4-4 Box Breathing</button>
+        <button id="btnExport" class="btn ghost">Export Sessions (JSON)</button>
+        <button id="btnClearData" class="btn ghost">Clear Local Data</button>
+      </div>
+      <div style="margin-top:10px" class="muted-small">Admin: sign in as <strong>admin@admin.com</strong> to manage playlists.</div>
+    </div>
+
+    <div class="card">
+      <h3>Admin • Playlists</h3>
+      <div id="adminPanel">
+        <div class="muted-small">(Only visible when signed in as admin)</div>
+        <div id="adminControls" class="hidden" style="margin-top:10px">
+          <input id="plTitle" type="text" placeholder="Playlist / Video title">
+          <input id="plURL" type="text" placeholder="YouTube watch or embed URL">
+          <select id="plKind"><option value="music">Music</option><option value="yoga">Yoga</option></select>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button id="btnAddPl" class="btn primary">Add</button>
+            <button id="btnRefreshPl" class="btn ghost">Refresh</button>
+          </div>
+          <div id="plList" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Session Summary</h3>
+      <div id="sessionList" class="muted-small">No sessions yet.</div>
+    </div>
+
+  </aside>
+</main>
+
+<footer>Educational prototype — not medical advice. For production integrate secure backend & server-side LLMs (Gemini/OpenAI).</footer>
+
+<script>
+/* ---------------------------
+   Storage keys & helpers
+   --------------------------- */
+const USERS_KEY = 'zentrack_users_v1';
+const SESS_KEY  = 'zentrack_sessions_v1';
+const PLS_KEY   = 'zentrack_playlists_v1';
+
+const qs = (s) => document.querySelector(s);
+const qsa = (s) => document.querySelectorAll(s);
+
+/* ---------------------------
+   Initialize demo data if needed
+   --------------------------- */
+function seedIfEmpty(){
+  if(!localStorage.getItem(USERS_KEY)){
+    const admin = { email:'admin@admin.com', pass:'adminpass', isAdmin:true };
+    const demoUser = { email:'user@demo.com', pass:'password', isAdmin:false };
+    localStorage.setItem(USERS_KEY, JSON.stringify([admin, demoUser]));
+  }
+  if(!localStorage.getItem(PLS_KEY)){
+    const demo = [
+      {id:1, title:'LoFi Chill Beats', url:'https://www.youtube.com/embed/5qap5aO4i9A', kind:'music'},
+      {id:2, title:'Calm Piano Playlist', url:'https://www.youtube.com/embed/MkNeIUgNPQ8', kind:'music'},
+      {id:3, title:'10-Min Stress Relief Yoga', url:'https://www.youtube.com/embed/v7AYKMP6rOE', kind:'yoga'}
+    ];
+    localStorage.setItem(PLS_KEY, JSON.stringify(demo));
+  }
+  if(!localStorage.getItem(SESS_KEY)){
+    localStorage.setItem(SESS_KEY, JSON.stringify([]));
+  }
+}
+seedIfEmpty();
+
+/* ---------------------------
+   Authentication (localStorage)
+   --------------------------- */
+let currentUser = null;
+
+function loadUsers(){ return JSON.parse(localStorage.getItem(USERS_KEY) || '[]'); }
+function saveUsers(u){ localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
+function loadPlaylists(){ return JSON.parse(localStorage.getItem(PLS_KEY) || '[]'); }
+function savePlaylists(p){ localStorage.setItem(PLS_KEY, JSON.stringify(p)); }
+function loadSessions(){ return JSON.parse(localStorage.getItem(SESS_KEY) || '[]'); }
+function saveSessions(s){ localStorage.setItem(SESS_KEY, JSON.stringify(s)); }
+
+function setSignedAs(email){
+  qs('#signedAs').textContent = email ? `Signed in: ${email}` : 'Not signed in';
+  qs('#btnLogout').classList.toggle('hidden', !email);
+}
+function showStage(id){
+  qsa('.stage').forEach(el=>el.classList.remove('active'));
+  qs('#' + id).classList.add('active');
+}
+
+/* login/register handlers */
+qs('#btnRegister').addEventListener('click', ()=>{
+  const email = qs('#inputEmail').value.trim().toLowerCase();
+  const pass  = qs('#inputPass').value;
+  if(!email || !pass){ qs('#authMsg').textContent = 'Enter email & password to register.'; return; }
+  const users = loadUsers();
+  if(users.some(u=>u.email===email)){ qs('#authMsg').textContent = 'Email already registered. Please login.'; return; }
+  users.push({email, pass, isAdmin:false});
+  saveUsers(users);
+  qs('#authMsg').textContent = 'Registered. You may login now.';
+});
+qs('#btnLogin').addEventListener('click', ()=>{
+  const email = qs('#inputEmail').value.trim().toLowerCase();
+  const pass  = qs('#inputPass').value;
+  const users = loadUsers();
+  const u = users.find(x=>x.email===email && x.pass===pass);
+  if(!u){ qs('#authMsg').textContent = 'Invalid credentials.'; return; }
+  currentUser = u;
+  setSignedAs(u.email);
+  qs('#authMsg').textContent = `Welcome back, ${u.email}`;
+  // go to questions step
+  showStage('stage-questions');
+  renderAdminControls();
+});
+qs('#btnGuest').addEventListener('click', ()=>{
+  currentUser = {email:'guest', isAdmin:false};
+  setSignedAs('Guest');
+  showStage('stage-questions'); renderAdminControls();
+});
+qs('#btnLogout').addEventListener('click', ()=>{
+  currentUser = null;
+  setSignedAs('');
+  showStage('stage-auth');
+  qs('#inputEmail').value=''; qs('#inputPass').value='';
+  renderAdminControls();
+});
+
+/* ---------------------------
+   Assessment logic
+   --------------------------- */
+qs('#btnAssess').addEventListener('click', ()=>{
+  const q1 = qs('#q_sleep').value;
+  const q2 = qs('#q_work').value;
+  const q3 = qs('#q_anx').value;
+  if(!q1||!q2||!q3){ qs('#assessmentResult').textContent = 'Please answer all three questions.'; return; }
+
+  // scoring: 0..6
+  let score=0;
+  score += (q1==='good'?0:(q1==='avg'?1:2));
+  score += (q2==='manageable'?0:(q2==='stressful'?1:2));
+  score += (q3==='rarely'?0:(q3==='sometimes'?1:2));
+
+  let level, advice;
+  if(score<=2){ level='Low'; advice='Maintain healthy routines; short breathing or light music works well.'; }
+  else if(score<=4){ level='Moderate'; advice='Try music therapy, 5-minute breathing & light yoga.'; }
+  else { level='High'; advice='Prefer yoga sessions, longer breathing, and chat support. Consider professional help if overwhelmed.'; }
+
+  // save session
+  const sessions = loadSessions();
+  sessions.push({ user: currentUser?.email || 'guest', score: score*15, level, advice, ts: new Date().toISOString() });
+  saveSessions(sessions);
+
+  // update UI
+  qs('#assessmentResult').textContent = `Report: ${level} stress — ${advice}`;
+  // redirect to dashboard
+  qs('#treatmentAdvice').textContent = advice;
+  updateLatestPill(level, score*15);
+  renderPlaylists();
+  renderSessionsList();
+  updateChart();
+  showStage('stage-dashboard');
+});
+
+/* ---------------------------
+   Playlist admin & render
+   --------------------------- */
+function renderPlaylists(){
+  const pls = loadPlaylists();
+  const container = qs('#playlistsPanel');
+  container.innerHTML = '';
+  if(!pls.length){ container.innerHTML = '<div class="muted-small">No playlists yet.</div>'; return; }
+  // Render grouped by kind
+  const music = pls.filter(p=>p.kind==='music');
+  const yoga  = pls.filter(p=>p.kind==='yoga');
+
+  const makeGroup = (title, arr) => {
+    const wrap = document.createElement('div');
+    const h = document.createElement('h4'); h.textContent = title; h.style.margin='6px 0';
+    wrap.appendChild(h);
+    arr.forEach(p=>{
+      const card = document.createElement('div');
+      card.style.marginBottom='12px';
+      card.innerHTML = `<div style="display:flex;gap:8px;align-items:center">
+        <div style="flex:1"><strong>${p.title}</strong><div class="muted-small">${p.kind}</div></div>
+        <div style="display:flex;gap:6px">
+          <button class="btn ghost" data-play="${p.url}">Play</button>
+          ${currentUser?.isAdmin? `<button class="btn ghost" data-del="${p.id}">Delete</button>` : ''}
+        </div>
+      </div>`;
+      wrap.appendChild(card);
+    });
+    return wrap;
+  };
+
+  if(music.length) container.appendChild(makeGroup('Music Playlists', music));
+  if(yoga.length) container.appendChild(makeGroup('Yoga Videos', yoga));
+
+  // attach handlers for play/delete
+  container.querySelectorAll('[data-play]').forEach(btn => {
+    btn.addEventListener('click', (e)=>{
+      const url = e.target.getAttribute('data-play');
+      // embed first playable video in therapy area — open a modal-like small player
+      openPlayer(url);
+    });
+  });
+  container.querySelectorAll('[data-del]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const idAttr = e.target.getAttribute('data-del');
+      if(!confirm('Delete this playlist?')) return;
+      const pls = loadPlaylists().filter(p=>p.id!=idAttr);
+      savePlaylists(pls);
+      renderPlaylists();
+    });
+  });
+}
+
+/* Open small player modal (simple) */
+function openPlayer(url){
+  // create overlay
+  const overlay = document.createElement('div');
+  overlay.style.position='fixed'; overlay.style.inset=0; overlay.style.background='rgba(0,0,0,0.6)';
+  overlay.style.display='grid'; overlay.style.placeItems='center'; overlay.style.zIndex=9999;
+  const box = document.createElement('div'); box.style.width='min(920px,96%)'; box.style.maxWidth='920px';
+  box.style.background='var(--panel)'; box.style.padding='12px'; box.style.borderRadius='12px';
+  const iframe = document.createElement('iframe'); iframe.width='100%'; iframe.height='520';
+  // normalize url to embed form if watch?v= exists
+  let embed = url;
+  if(url.includes('watch?v=')) embed = url.replace('watch?v=','embed/');
+  if(url.includes('youtube.com/') && !embed.includes('embed')) {
+    // leave as-is
+  }
+  iframe.src = embed;
+  const close = document.createElement('button'); close.textContent='Close'; close.className='btn ghost';
+  close.style.marginTop='10px';
+  close.addEventListener('click', ()=>document.body.removeChild(overlay));
+  box.appendChild(iframe); box.appendChild(close); overlay.appendChild(box); document.body.appendChild(overlay);
+}
+
+/* Admin panel render */
+function renderAdminControls(){
+  const adminControls = qs('#adminControls');
+  if(currentUser && currentUser.isAdmin){
+    adminControls.classList.remove('hidden');
+    qs('#plList').innerHTML = '';
+    renderPlaylists();
+  } else {
+    adminControls.classList.add('hidden');
+    qs('#plList').innerHTML = '<div class="muted-small">Sign in as admin to manage playlists.</div>';
+  }
+}
+
+/* Add playlist handler */
+qs('#btnAddPl').addEventListener('click', ()=>{
+  const title = qs('#plTitle').value.trim();
+  const url = qs('#plURL').value.trim();
+  const kind = qs('#plKind').value;
+  if(!title || !url){ alert('Provide title and URL'); return; }
+  const pls = loadPlaylists();
+  const id = Date.now();
+  pls.push({id, title, url, kind});
+  savePlaylists(pls);
+  qs('#plTitle').value=''; qs('#plURL').value='';
+  renderPlaylists();
+});
+
+/* refresh button */
+qs('#btnRefreshPl').addEventListener('click', ()=>renderPlaylists());
+
+/* ---------------------------
+   Chat logic (local rule-based)
+   --------------------------- */
+qs('#chatSend').addEventListener('click', sendChat);
+qs('#chatInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); sendChat(); } });
+
+function appendMessage(text, who='bot'){
+  const m = document.createElement('div'); m.className = 'msg ' + (who==='user'?'user':'bot');
+  m.textContent = text;
+  qs('#chatMessages').appendChild(m);
+  qs('#chatMessages').scrollTop = qs('#chatMessages').scrollHeight;
+}
+function sendChat(){
+  const text = qs('#chatInput').value.trim();
+  if(!text) return;
+  appendMessage(text, 'user');
+  qs('#chatInput').value='';
+  // local rule-based reply with small delay
+  appendMessage('...', 'bot');
+  setTimeout(()=>{
+    // remove the placeholder last bot "..."
+    const msgs = qsa('.messages .msg');
+    msgs[msgs.length-1].remove();
+
+    const reply = localBotReply(text);
+    appendMessage(reply, 'bot');
+  }, 650);
+}
+function localBotReply(msg){
+  const t = msg.toLowerCase();
+  if(/(anxious|panic|worry|worried)/.test(t)) return "I hear anxiety there. Try a 5-count breathing: inhale 4s → hold 4s → exhale 4s. Want a music playlist or breathing guide?";
+  if(/(tired|exhaust|sleep)/.test(t)) return "You sound tired — a short nap and gentle yoga may help. Would you like a 10-min yoga video?";
+  if(/(angry|frustrat)/.test(t)) return "Feeling angry is natural — step back for 2 minutes and do 5 deep breaths. Want a grounding exercise?";
+  if(/(help|sad|depressed)/.test(t)) return "I'm sorry you're feeling this way. Reaching out to someone trusted or a professional might help. Meanwhile we can do breathing or play calming music.";
+  // friendly fallback
+  return "Thanks for sharing. What's one small step you'd like to try in the next 10 minutes? (I can suggest music, breathing, or a yoga video.)";
+}
+
+/* ---------------------------
+   Sessions, Chart & UI helpers
+   --------------------------- */
+function updateLatestPill(level, numericScore){
+  const pill = qs('#latestPill');
+  if(level==='Low'){ pill.textContent = `Low • ${numericScore || 0}`; pill.className='pill low'; }
+  else if(level==='Moderate'){ pill.textContent = `Moderate • ${numericScore || 0}`; pill.className='pill mod'; }
+  else { pill.textContent = `High • ${numericScore || 0}`; pill.className='pill high'; }
+}
+
+function renderSessionsList(){
+  const sessions = loadSessions();
+  if(!sessions.length){ qs('#sessionList').textContent = 'No sessions yet.'; return; }
+  const html = sessions.slice().reverse().map(s=> {
+    const t = new Date(s.ts).toLocaleString();
+    return `<div style="margin-bottom:8px"><strong>${s.level}</strong> • ${s.score}pts • <span class="muted-small">${t}</span><div class="muted-small">${s.advice}</div></div>`;
+  }).join('');
+  qs('#sessionList').innerHTML = html;
+}
+
+/* Chart */
+let trendChart = null;
+function updateChart(){
+  const sessions = loadSessions();
+  const labels = sessions.map(s=> new Date(s.ts).toLocaleDateString());
+  const data = sessions.map(s=> s.score);
+  const ctx = qs('#trendChart').getContext('2d');
+  if(trendChart) { trendChart.data.labels = labels; trendChart.data.datasets[0].data = data; trendChart.update(); return; }
+  trendChart = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels, datasets:[{label:'Stress Score', data, tension:0.3, fill:true, backgroundColor:'rgba(124,58,237,0.12)', borderColor:'#7c3aed', pointRadius:4}]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ suggestedMin:0, suggestedMax:100 } } }
+  });
+}
+
+/* ---------------------------
+   Quick actions
+   --------------------------- */
+qs('#btnStartBreath').addEventListener('click', ()=>startBoxBreathing(4));
+qs('#btnExport').addEventListener('click', ()=>{
+  const blob = new Blob([localStorage.getItem(SESS_KEY) || '[]'], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'zentrack_sessions.json'; a.click();
+});
+qs('#btnClearData').addEventListener('click', ()=>{
+  if(!confirm('Clear all local data (users, playlists, sessions)?')) return;
+  localStorage.removeItem(USERS_KEY); localStorage.removeItem(SESS_KEY); localStorage.removeItem(PLS_KEY);
+  location.reload();
+});
+
+/* Box breathing UI (small overlay) */
+function startBoxBreathing(n=4){
+  const overlay = document.createElement('div'); overlay.style.position='fixed'; overlay.style.inset=0; overlay.style.display='grid'; overlay.style.placeItems='center'; overlay.style.background='rgba(2,6,23,0.6)'; overlay.style.zIndex=9999;
+  const circle = document.createElement('div'); circle.style.width='210px'; circle.style.height='210px'; circle.style.borderRadius='999px'; circle.style.display='grid'; circle.style.placeItems='center'; circle.style.background='linear-gradient(90deg, rgba(124,58,237,0.12), rgba(34,211,238,0.06))'; circle.style.backdropFilter='blur(6px)';
+  const txt = document.createElement('div'); txt.style.fontWeight=800; txt.style.textAlign='center'; txt.textContent='Ready';
+  circle.appendChild(txt);
+  overlay.appendChild(circle);
+  document.body.appendChild(overlay);
+
+  let phase = 0;
+  let cycles = 0;
+  function step(){
+    const labels = ['Inhale','Hold','Exhale','Hold'];
+    let t = n;
+    txt.textContent = `${labels[phase]} ${t}s`;
+    const interval = setInterval(()=>{
+      t--; if(t>=0) txt.textContent = `${labels[phase]} ${t}s`;
+      if(t<0){ clearInterval(interval); phase=(phase+1)%4; if(phase===0){ cycles++; } if(cycles>=3){ document.body.removeChild(overlay); return; } step(); }
+    },1000);
+  }
+  step();
+}
+
+/* ---------------------------
+   On load: initial rendering
+   --------------------------- */
+(function init(){
+  // show admin controls if admin
+  renderAdminControls();
+  renderPlaylists();
+  renderSessionsList();
+  updateChart();
+  // if sessions exist set latest pill
+  const s = loadSessions(); if(s && s.length) updateLatestPill(s[s.length-1].level, s[s.length-1].score);
+})();
+</script>
+
+</body>
+</html>
