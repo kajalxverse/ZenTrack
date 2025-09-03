@@ -1,601 +1,667 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>ZenTrack — Stress Detection & Therapy (Frontend)</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
-<style>
-  :root{
-    --bg:#071029; --panel:#0d1623; --muted:#94a3b8; --txt:#e6eef8;
-    --accent1:#7c3aed; --accent2:#22d3ee; --glass: rgba(255,255,255,0.03);
-    --ok:#10b981; --warn:#f59e0b; --bad:#ef4444;
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0; font-family:Inter,system-ui,Arial; background:
-    radial-gradient(800px 400px at 10% 10%, rgba(124,58,237,0.06), transparent),
-    linear-gradient(120deg, var(--bg), #051226); color:var(--txt); -webkit-font-smoothing:antialiased;
-  }
-  header{padding:18px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px;}
-  .brand{display:flex;align-items:center;gap:12px}
-  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:grid;place-items:center;font-weight:800;color:#fff}
-  .title h1{margin:0;font-size:18px}
-  .title p{margin:4px 0 0;color:var(--muted);font-size:13px}
-  .main{max-width:1100px;margin:14px auto;padding:0 14px;display:grid;grid-template-columns:1fr 360px;gap:18px}
-  @media(max-width:980px){ .main{grid-template-columns:1fr} .aside{order:2} .content{order:1} }
-
-  /* Cards */
-  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,0.04); box-shadow:0 8px 30px rgba(2,6,23,0.6); }
-  h2{margin:0 0 8px 0}
-  p.muted{color:var(--muted);font-size:13px;margin:6px 0 10px}
-
-  /* form */
-  input[type=text], input[type=password], select, textarea{
-    width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background:transparent; color:var(--txt);
-    margin-bottom:10px; outline:none; transition:box-shadow .18s, border-color .18s;
-  }
-  input:focus, select:focus, textarea:focus{box-shadow:0 8px 30px rgba(34,211,238,0.06); border-color:rgba(34,211,238,0.3)}
-
-  button.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
-  .btn.primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:white}
-  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--txt)}
-
-  /* Stages (single-page flow) */
-  .stage{display:none}
-  .stage.active{display:block; animation:fadeIn .36s ease}
-  @keyframes fadeIn{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
-
-  /* therapy options */
-  .grid{display:grid;grid-template-columns:1fr 1fr; gap:12px}
-  @media(max-width:720px){ .grid{grid-template-columns:1fr} }
-  .option{background:var(--glass); padding:12px;border-radius:10px; cursor:pointer; transition:transform .18s, box-shadow .18s}
-  .option:hover{transform:translateY(-6px); box-shadow:0 14px 40px rgba(2,6,23,0.6)}
-
-  /* right column */
-  .aside .card{margin-bottom:12px}
-  .pill{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:700}
-  .pill.low{background:rgba(16,185,129,0.12);color:var(--ok)}
-  .pill.mod{background:rgba(245,158,11,0.12);color:var(--warn)}
-  .pill.high{background:rgba(239,68,68,0.12);color:var(--bad)}
-
-  /* chat */
-  .chat-window{display:flex;flex-direction:column;gap:8px}
-  .messages{height:220px;overflow:auto;padding:8px;border-radius:8px;background:rgba(0,0,0,0.25)}
-  .msg{margin:6px 0;padding:8px;border-radius:8px;max-width:84%}
-  .msg.user{background:linear-gradient(90deg,#1f2937,#0b1320); margin-left:auto}
-  .msg.bot{background:linear-gradient(90deg,#0b1220,#071226); color:var(--muted)}
-
-  /* small helpers */
-  .muted-small{color:var(--muted); font-size:13px}
-  .center{display:flex;align-items:center;gap:8px}
-  .hidden{display:none}
-  footer{padding:20px;text-align:center;color:var(--muted);font-size:13px}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ZenTrack – Stress Detection & Therapy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3774/3774299.png" />
+  <style>
+    :root {
+      --primary: #6366f1;
+      --secondary: #06b6d4;
+      --accent: #fbbf24;
+      --bg: #f8fafc;
+      --card-bg: #fff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 18px;
+      --shadow: 0 4px 24px rgba(99,102,241,0.08);
+      --feature-gradient: linear-gradient(120deg, #e0e7ff 60%, #cffafe 100%);
+      --feature-gradient-hover: linear-gradient(120deg, #dbeafe 60%, #a7f3d0 100%);
+    }
+    html.dark, body.dark {
+      --primary: #818cf8;
+      --secondary: #22d3ee;
+      --accent: #fbbf24;
+      --bg: #18181b;
+      --card-bg: #23232a;
+      --text: #e5e7eb;
+      --muted: #a1a1aa;
+      --border: #27272a;
+      --feature-gradient: linear-gradient(120deg, #23232a 60%, #18181b 100%);
+      --feature-gradient-hover: linear-gradient(120deg, #18181b 60%, #23232a 100%);
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      scroll-behavior: smooth;
+      transition: background .3s, color .3s;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: #fff;
+      padding: 32px 0 16px 0;
+      text-align: center;
+      box-shadow: var(--shadow);
+      border-bottom-left-radius: var(--radius);
+      border-bottom-right-radius: var(--radius);
+      position: relative;
+      z-index: 2;
+    }
+    header h1 {
+      font-size: 2.7rem;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      animation: fadeInDown 1s;
+    }
+    .dark-toggle {
+      position: absolute;
+      top: 18px;
+      right: 32px;
+      background: rgba(255,255,255,0.12);
+      border: none;
+      border-radius: 50px;
+      padding: 8px 18px;
+      color: #fff;
+      font-size: 1.1rem;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: background .2s, color .2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dark-toggle:hover {
+      background: var(--accent);
+      color: #23232a;
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-40px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      background: var(--card-bg);
+      box-shadow: var(--shadow);
+      padding: 12px 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--border);
+      animation: fadeInDown 1.2s;
+      transition: background .3s, color .3s;
+    }
+    nav a {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+      padding: 8px 18px;
+      border-radius: 12px;
+      transition: background .2s, color .2s;
+      font-size: 1.08rem;
+    }
+    nav a:hover, nav a.active {
+      background: var(--primary);
+      color: #fff;
+    }
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      padding: 32px 0;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      animation: fadeInUp 1.2s;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px 28px;
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+      animation: fadeInUp .8s;
+      transition: box-shadow .2s, background .3s, color .3s;
+    }
+    .card:hover {
+      box-shadow: 0 8px 32px rgba(99,102,241,0.12);
+    }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    .feature-card {
+      background: var(--feature-gradient);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px 18px;
+      text-align: left;
+      cursor: pointer;
+      transition: box-shadow .2s, transform .2s, background .3s;
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card:hover {
+      box-shadow: 0 8px 32px rgba(6,182,212,0.12);
+      transform: translateY(-4px) scale(1.03);
+      background: var(--feature-gradient-hover);
+    }
+    .feature-card h3 {
+      margin: 0 0 0.5em 0;
+      font-size: 1.25rem;
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .feature-card p {
+      color: var(--muted);
+      margin-bottom: 1em;
+      font-size: 1.05rem;
+    }
+    .feature-card .btn {
+      margin-top: 8px;
+    }
+    .dashboard-images {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 18px;
+      margin-bottom: 2em;
+    }
+    .dashboard-images img {
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      transition: transform .3s, box-shadow .3s;
+      animation: fadeInUp .8s;
+    }
+    .dashboard-info {
+      margin-bottom: 2em;
+      background: rgba(99,102,241,0.07);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      color: var(--text);
+      font-size: 1.08rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      transition: background .3s, color .3s;
+    }
+    .dashboard-info strong {
+      color: var(--primary);
+    }
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .3s cubic-bezier(.4,0,.2,1);
+      box-shadow: 0 2px 8px rgba(34,211,238,0.08);
+      font-size: 1rem;
+      margin-top: 8px;
+    }
+    .btn-primary {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: white;
+    }
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: scale(1.07);
+      box-shadow: 0 4px 16px rgba(124,58,237,0.15);
+    }
+    .btn-secondary {
+      background: #fff;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+    .btn-secondary:hover {
+      background: var(--primary);
+      color: #fff;
+      transform: scale(1.07);
+      box-shadow: 0 4px 16px rgba(34,211,238,0.12);
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #f1f5f9;
+      color: var(--text);
+      margin-bottom: 12px;
+      font-size: 1rem;
+      transition: border-color .2s, background .3s, color .3s;
+    }
+    html.dark input, html.dark select, html.dark textarea,
+    body.dark input, body.dark select, body.dark textarea {
+      background: #23232a;
+      color: #e5e7eb;
+      border: 1px solid var(--border);
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+    #chatBox {
+      background: #f1f5f9;
+      border-radius: 12px;
+      padding: 10px;
+      height: 200px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      transition: box-shadow .3s, background .3s, color .3s;
+      font-size: 1rem;
+    }
+    html.dark #chatBox, body.dark #chatBox {
+      background: #23232a;
+      color: #e5e7eb;
+    }
+    .message {
+      margin: 5px 0;
+      padding: 8px 12px;
+      border-radius: 12px;
+      max-width: 75%;
+      animation: fadeInUp .5s;
+      word-break: break-word;
+      font-size: 1rem;
+    }
+    .user {
+      background: var(--secondary);
+      color: #fff;
+      margin-left: auto;
+      text-align: right;
+    }
+    .bot {
+      background: var(--primary);
+      color: #fff;
+      margin-right: auto;
+      text-align: left;
+    }
+    canvas {
+      width: 100% !important;
+      height: 300px !important;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      background: #fff;
+      margin-top: 12px;
+    }
+    html.dark canvas, body.dark canvas {
+      background: #23232a !important;
+    }
+    footer {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: #fff;
+      text-align: center;
+      padding: 32px 10px 16px 10px;
+      margin-top: 40px;
+      border-top-left-radius: var(--radius);
+      border-top-right-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transition: background .3s, color .3s;
+    }
+    .socials {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      margin-top: 10px;
+    }
+    .socials a {
+      color: #fff;
+      font-size: 22px;
+      transition: color .3s, transform .3s;
+      text-decoration: none;
+    }
+    .socials a:hover {
+      color: var(--accent);
+      transform: scale(1.2);
+    }
+    #contactForm {
+      margin: 24px auto 0 auto;
+      max-width: 400px;
+      background: rgba(255,255,255,0.07);
+      padding: 18px 16px;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      transition: background .3s, color .3s;
+    }
+    html.dark #contactForm, body.dark #contactForm {
+      background: rgba(30,41,59,0.7);
+      color: #e5e7eb;
+    }
+    #contactForm input, #contactForm textarea {
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    html.dark #contactForm input, html.dark #contactForm textarea,
+    body.dark #contactForm input, body.dark #contactForm textarea {
+      background: #23232a;
+      color: #e5e7eb;
+      border: 1px solid var(--border);
+    }
+    #contactForm input:focus, #contactForm textarea:focus {
+      border-color: var(--secondary);
+    }
+    #contactForm button {
+      width: 100%;
+      margin-top: 8px;
+    }
+    @media (max-width: 900px) {
+      .container { padding: 18px 2vw; }
+      .dashboard-images { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+    }
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.5rem; }
+      .container { padding: 8px 2vw; gap: 18px;}
+      .card { padding: 18px 8px;}
+      .dashboard-grid { grid-template-columns: 1fr; gap: 14px;}
+      .dashboard-images img { height: 80px;}
+      nav { gap: 8px; font-size: 0.95rem;}
+      .dark-toggle { right: 12px; top: 12px;}
+    }
+  </style>
 </head>
 <body>
-
-<header>
-  <div class="brand">
-    <div class="logo">Z</div>
-    <div class="title"><h1>ZenTrack</h1><p>Detect • Manage • Heal — Stress</p></div>
+  <header>
+    <h1>ZenTrack – Stress Detection & Therapy</h1>
+    <p style="font-size:1.15rem;font-weight:500;margin-top:8px;opacity:.85;">Empowering your mind for a stress-free life</p>
+    <button class="dark-toggle" id="darkToggle" title="Toggle dark mode">
+      <span id="darkIcon">🌙</span> <span id="darkLabel">Dark Mode</span>
+    </button>
+  </header>
+  <nav id="mainNav" style="display:none;">
+    <a href="#" id="navDashboard" class="active">Dashboard</a>
+    <a href="#" id="navTherapy">Therapy</a>
+    <a href="#" id="navAbout">About</a>
+    <a href="#" id="navContact">Contact</a>
+    <a href="#" onclick="logout()">Logout</a>
+  </nav>
+  <div class="container">
+    <!-- Login -->
+    <section id="loginStage" class="card" style="display:block;">
+      <h2 style="color:var(--primary);margin-bottom:0.5em;">Login & Register</h2>
+      <input type="text" id="username" placeholder="Enter email">
+      <input type="password" id="password" placeholder="Enter password">
+      <button class="btn btn-primary" onclick="simulateLogin()">Login</button>
+      <button class="btn btn-secondary" onclick="simulateRegister()">Register</button>
+      <p id="authResult"></p>
+      <div style="margin-top:2em;color:var(--muted);font-size:1.05rem;">
+        <b>New to ZenTrack?</b> Register to unlock personalized stress management tools, therapy resources, and your own dashboard.
+      </div>
+    </section>
+    <!-- Dashboard -->
+    <section id="dashboardStage" class="card" style="display:none;">
+      <h2 style="color:var(--primary);font-size:2rem;margin-bottom:0.5em;">Dashboard</h2>
+      <div class="dashboard-info">
+        <strong>Welcome to your ZenTrack dashboard!</strong> Here you can chat with our AI bot, listen to calming music, try yoga therapy, visualize your stress levels, and learn more about the project. 
+        <br><br>
+        <span style="color:var(--muted);">Tip: Use the dark mode toggle for a relaxing night experience.</span>
+      </div>
+      <div class="dashboard-images">
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" alt="Brain Stress">
+        <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80" alt="Stress Control">
+        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80" alt="Mental Health">
+        <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=400&q=80" alt="Relaxation">
+      </div>
+      <div class="dashboard-grid">
+        <div class="feature-card" onclick="showSection('chatFeature')">
+          <h3>💬 Chat with Bot</h3>
+          <p>Get instant support and advice for stress management.</p>
+          <button class="btn btn-primary">Go to Chat</button>
+        </div>
+        <div class="feature-card" onclick="showSection('stressChartSection')">
+          <h3>📊 Stress Graph</h3>
+          <p>Track your stress levels over time.</p>
+          <button class="btn btn-primary">View Graph</button>
+        </div>
+      </div>
+    </section>
+    <!-- Therapy -->
+    <section id="therapyStage" class="card" style="display:none;">
+      <h2 style="color:var(--primary);font-size:2rem;margin-bottom:0.5em;">Therapy</h2>
+      <div class="dashboard-grid">
+        <div class="feature-card">
+          <h3>🎶 Music Therapy</h3>
+          <p>Listen to relaxing music to calm your mind.</p>
+          <iframe src="https://www.youtube.com/embed/5qap5aO4i9A" allowfullscreen></iframe>
+        </div>
+        <div class="feature-card">
+          <h3>🧘 Yoga Therapy</h3>
+          <p>Follow guided yoga sessions for stress relief.</p>
+          <iframe src="https://www.youtube.com/embed/v7AYKMP6rOE" allowfullscreen></iframe>
+        </div>
+      </div>
+    </section>
+    <!-- About -->
+    <section id="aboutStage" class="card" style="display:none;">
+      <h2 style="color:var(--primary);">About ZenTrack</h2>
+      <p>
+        <strong>ZenTrack</strong> is a modern mental health platform dedicated to helping individuals manage stress and improve well-being.
+        Our mission is to provide accessible, science-backed tools and resources for stress detection, therapy, and personal growth.
+      </p>
+      <h3 style="color:var(--secondary);">About the Project</h3>
+      <ul style="margin-bottom:1em;">
+        <li>Personalized dashboard for stress tracking</li>
+        <li>AI-powered chatbot for instant support</li>
+        <li>Music and yoga therapy resources</li>
+        <li>Visual stress graph for daily progress</li>
+        <li>Responsive design with dark mode</li>
+      </ul>
+      <div style="margin-bottom:1em;color:var(--muted);font-size:1.05rem;">
+        <b>Why ZenTrack?</b> We believe mental wellness should be accessible, interactive, and enjoyable. Our platform is designed for everyone—students, professionals, and anyone seeking a calmer mind.
+      </div>
+    </section>
+    <!-- Contact -->
+    <section id="contactStage" class="card" style="display:none;">
+      <h2 style="color:var(--primary);">Contact Us</h2>
+      <form id="contactForm">
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <textarea name="message" rows="4" placeholder="Your Message" required></textarea>
+        <button class="btn btn-primary" type="submit">Send Message</button>
+        <p id="contactResult" style="margin-top:10px;"></p>
+      </form>
+      <div style="margin-top:2em;color:var(--muted);font-size:1.05rem;">
+        <b>Email:</b> <a href="mailto:yourmain123@gmail.com" style="color:var(--accent);text-decoration:underline;">yourmain123@gmail.com</a>
+      </div>
+      <div class="socials" style="margin-top:1em;">
+        <a href="https://youtube.com" target="_blank" title="YouTube">📺</a>
+        <a href="https://instagram.com" target="_blank" title="Instagram">📸</a>
+        <a href="https://linkedin.com" target="_blank" title="LinkedIn">💼</a>
+        <a href="https://twitter.com" target="_blank" title="Twitter">🐦</a>
+      </div>
+    </section>
+    <!-- Chat Bot -->
+    <section id="chatFeature" class="card" style="display:none;">
+      <h3 style="color:var(--secondary);">💬 Chat with Bot</h3>
+      <div id="chatBox"></div>
+      <input type="text" id="chatInput" placeholder="Type your message...">
+      <button class="btn btn-secondary" onclick="sendMessageGemini()">Send</button>
+      <div style="margin-top:1em;color:var(--muted);font-size:0.98rem;">
+        <b>How it works:</b> Ask anything about stress, relaxation, or mental health. The AI bot will reply instantly!
+      </div>
+    </section>
+    <!-- Stress Chart -->
+    <section id="stressChartSection" class="card" style="display:none;">
+      <h3 style="color:var(--secondary);">📊 Stress Graph Dashboard</h3>
+      <canvas id="stressChart"></canvas>
+      <div style="margin-top:1em;color:var(--muted);font-size:0.98rem;">
+        <b>Tip:</b> Track your stress levels daily to see your progress.
+      </div>
+    </section>
   </div>
-  <div class="center">
-    <div id="signedAs" class="muted-small">Not signed in</div>
-    <button id="btnLogout" class="btn ghost hidden">Logout</button>
-  </div>
-</header>
+  <footer id="footer">
+    <p style="font-size:1.1rem;">Need support? Contact us at <a href="mailto:yourmain123@gmail.com" style="color:var(--accent);text-decoration:underline;">yourmain123@gmail.com</a></p>
+    <p style="margin-top:18px;">© 2025 ZenTrack – All Rights Reserved</p>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Navigation logic
+    function showSection(id) {
+      document.querySelectorAll('.card').forEach(s => s.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+      document.querySelectorAll('#mainNav a').forEach(a => a.classList.remove('active'));
+      if (id === 'dashboardStage') document.getElementById('navDashboard').classList.add('active');
+      if (id === 'therapyStage') document.getElementById('navTherapy').classList.add('active');
+      if (id === 'aboutStage') document.getElementById('navAbout').classList.add('active');
+      if (id === 'contactStage') document.getElementById('navContact').classList.add('active');
+    }
+    document.getElementById('navDashboard').onclick = function(){ showSection('dashboardStage'); };
+    document.getElementById('navTherapy').onclick = function(){ showSection('therapyStage'); };
+    document.getElementById('navAbout').onclick = function(){ showSection('aboutStage'); };
+    document.getElementById('navContact').onclick = function(){ showSection('contactStage'); };
 
-<main class="main">
-  <!-- content -->
-  <section class="content">
-    <!-- Stage 1: Auth -->
-    <div id="stage-auth" class="card stage active">
-      <h2>1. Login / Register</h2>
-      <p class="muted">Create an account or login. (Admin: <strong>admin@admin.com</strong> / <strong>adminpass</strong>)</p>
+    // Login logic
+    function simulateLogin(){
+      const email = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      if(email && pass){
+        document.getElementById('authResult').innerText = `Welcome ${email}`;
+        document.getElementById('mainNav').style.display = 'flex'; // Show nav after login
+        showSection('dashboardStage');
+      } else {
+        document.getElementById('authResult').innerText = 'Please enter email and password';
+      }
+    }
+    function simulateRegister(){
+      const email = document.getElementById('username').value;
+      document.getElementById('authResult').innerText = email ? `Registered new user: ${email}` : 'Enter email to register';
+    }
+    function logout(){
+      showSection('loginStage');
+      document.getElementById('mainNav').style.display = 'none'; // Hide nav on logout
+      document.querySelectorAll('#mainNav a').forEach(a => a.classList.remove('active'));
+    }
 
-      <input id="inputEmail" type="text" placeholder="Email" autocomplete="username" />
-      <input id="inputPass" type="password" placeholder="Password" autocomplete="current-password" />
+    // Chat Bot
+    async function sendMessageGemini() {
+      const chatInput = document.getElementById('chatInput');
+      const message = chatInput.value.trim();
+      if (!message) return;
+      addMessage(message, 'user');
+      chatInput.value = '';
+      try {
+        const response = await fetch(
+          'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyAayAq3xLcfbpAyOLETIBcLTcd6t8ieEFE',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: message }] }]
+            })
+          }
+        );
+        const data = await response.json();
+        let botReply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't understand.";
+        botReply = botReply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                           .replace(/\*(.*?)\*/g, '<i>$1</i>')
+                           .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
+        addMessage(botReply, 'bot', true);
+      } catch (error) {
+        addMessage("Error connecting to bot.", 'bot');
+      }
+    }
+    function addMessage(text, sender, isHTML){
+      const chatBox = document.getElementById('chatBox');
+      const msg = document.createElement('div');
+      msg.classList.add('message', sender);
+      if(isHTML) {
+        msg.innerHTML = text;
+      } else {
+        msg.innerText = text;
+      }
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
 
-      <div style="display:flex;gap:8px;">
-        <button id="btnLogin" class="btn primary">Login</button>
-        <button id="btnRegister" class="btn ghost">Register</button>
-        <button id="btnGuest" class="btn ghost">Continue as Guest</button>
-      </div>
+    // Contact form logic (send to email)
+    document.getElementById('contactForm').onsubmit = function(e) {
+      e.preventDefault();
+      // Compose mailto link
+      const name = this.name.value;
+      const email = this.email.value;
+      const message = this.message.value;
+      const subject = encodeURIComponent("ZenTrack Contact Form Submission");
+      const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nMessage: ${message}`);
+      window.location.href = `mailto:yourmain123@gmail.com?subject=${subject}&body=${body}`;
+      document.getElementById('contactResult').innerText = "Thank you for contacting us! Your email client should open now.";
+      this.reset();
+    };
 
-      <p id="authMsg" class="muted-small"></p>
-    </div>
+    // Dark mode toggle
+    const darkToggle = document.getElementById('darkToggle');
+    const darkIcon = document.getElementById('darkIcon');
+    const darkLabel = document.getElementById('darkLabel');
+    function setDarkMode(on) {
+      if(on) {
+        document.documentElement.classList.add('dark');
+        document.body.classList.add('dark');
+        darkIcon.textContent = "☀️";
+        darkLabel.textContent = "Light Mode";
+        localStorage.setItem('zentrack-dark', '1');
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.body.classList.remove('dark');
+        darkIcon.textContent = "🌙";
+        darkLabel.textContent = "Dark Mode";
+        localStorage.setItem('zentrack-dark', '0');
+      }
+    }
+    darkToggle.onclick = function() {
+      setDarkMode(!document.documentElement.classList.contains('dark'));
+    };
+    if(localStorage.getItem('zentrack-dark') === '1') setDarkMode(true);
 
-    <!-- Stage 2: Questions -->
-    <div id="stage-questions" class="card stage">
-      <h2>2. Quick Assessment (3 questions)</h2>
-      <p class="muted">Answer the following to get a personalized stress report:</p>
-
-      <label class="muted-small">1) How well did you sleep last night?</label>
-      <select id="q_sleep">
-        <option value="">Select</option>
-        <option value="good">Good</option>
-        <option value="avg">Average</option>
-        <option value="poor">Poor</option>
-      </select>
-
-      <label class="muted-small">2) How is your current workload / studies?</label>
-      <select id="q_work">
-        <option value="">Select</option>
-        <option value="manageable">Manageable</option>
-        <option value="stressful">Stressful</option>
-        <option value="overwhelming">Overwhelming</option>
-      </select>
-
-      <label class="muted-small">3) How often do you feel anxious during the day?</label>
-      <select id="q_anx">
-        <option value="">Select</option>
-        <option value="rarely">Rarely</option>
-        <option value="sometimes">Sometimes</option>
-        <option value="often">Often</option>
-      </select>
-
-      <div style="display:flex;gap:8px;margin-top:10px;">
-        <button id="btnAssess" class="btn primary">Get Report</button>
-        <button id="btnBackToAuth" class="btn ghost">Back</button>
-        <p>Hi</p>
-      </div>
-
-      <div id="assessmentResult" class="muted-small" style="margin-top:10px"></div>
-    </div>
-
-    <!-- Stage 3: Dashboard -->
-    <div id="stage-dashboard" class="card stage">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
-        <div>
-          <h2 id="dashTitle">3. Dashboard</h2>
-          <div id="dashSubtitle" class="muted-small">Your personalized recommendations</div>
-        </div>
-        <div style="text-align:right">
-          <div class="muted-small">Latest status</div>
-          <div id="latestPill" class="pill low">No data</div>
-        </div>
-      </div>
-
-      <div style="margin-top:12px" class="muted-small">
-        <strong>Treatment Advice:</strong> <span id="treatmentAdvice">—</span>
-      </div>
-
-      <hr style="border-color:rgba(255,255,255,0.03);margin:12px 0">
-
-      <div class="grid">
-        <div>
-          <h3 style="margin:6px 0">Chat Support</h3>
-          <div class="card" style="padding:8px">
-            <div class="chat-window">
-              <div id="chatMessages" class="messages" aria-live="polite"></div>
-              <div style="display:flex;gap:8px;margin-top:8px">
-                <input id="chatInput" type="text" placeholder="Share how you feel..." />
-                <button id="chatSend" class="btn primary">Send</button>
-              </div>
-              <div class="muted-small" style="margin-top:8px">Tip: This demo uses a local rule-based assistant. Replace with server-side LLM in production.</div>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <h3 style="margin:6px 0">Therapies</h3>
-          <div class="card" style="padding:10px">
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <div class="option" id="playlistsPanel" style="flex:1 1 100%"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h3 style="margin-top:12px">Stress Trend</h3>
-      <div class="card" style="padding:10px">
-        <canvas id="trendChart" height="160" aria-label="Stress trend chart"></canvas>
-      </div>
-    </div>
-
-  </section>
-
-  <!-- aside -->
-  <aside class="aside">
-    <div class="card">
-      <h3>Quick Actions</h3>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-        <button id="btnStartBreath" class="btn ghost">Start 4-4-4 Box Breathing</button>
-        <button id="btnExport" class="btn ghost">Export Sessions (JSON)</button>
-        <button id="btnClearData" class="btn ghost">Clear Local Data</button>
-      </div>
-      <div style="margin-top:10px" class="muted-small">Admin: sign in as <strong>admin@admin.com</strong> to manage playlists.</div>
-    </div>
-
-    <div class="card">
-      <h3>Admin • Playlists</h3>
-      <div id="adminPanel">
-        <div class="muted-small">(Only visible when signed in as admin)</div>
-        <div id="adminControls" class="hidden" style="margin-top:10px">
-          <input id="plTitle" type="text" placeholder="Playlist / Video title">
-          <input id="plURL" type="text" placeholder="YouTube watch or embed URL">
-          <select id="plKind"><option value="music">Music</option><option value="yoga">Yoga</option></select>
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button id="btnAddPl" class="btn primary">Add</button>
-            <button id="btnRefreshPl" class="btn ghost">Refresh</button>
-          </div>
-          <div id="plList" style="margin-top:10px"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>Session Summary</h3>
-      <div id="sessionList" class="muted-small">No sessions yet.</div>
-    </div>
-
-  </aside>
-</main>
-
-<footer>Educational prototype — not medical advice. For production integrate secure backend & server-side LLMs (Gemini/OpenAI).</footer>
-
-<script>
-/* ---------------------------
-   Storage keys & helpers
-   --------------------------- */
-const USERS_KEY = 'zentrack_users_v1';
-const SESS_KEY  = 'zentrack_sessions_v1';
-const PLS_KEY   = 'zentrack_playlists_v1';
-
-const qs = (s) => document.querySelector(s);
-const qsa = (s) => document.querySelectorAll(s);
-
-/* ---------------------------
-   Initialize demo data if needed
-   --------------------------- */
-function seedIfEmpty(){
-  if(!localStorage.getItem(USERS_KEY)){
-    const admin = { email:'admin@admin.com', pass:'adminpass', isAdmin:true };
-    const demoUser = { email:'user@demo.com', pass:'password', isAdmin:false };
-    localStorage.setItem(USERS_KEY, JSON.stringify([admin, demoUser]));
-  }
-  if(!localStorage.getItem(PLS_KEY)){
-    const demo = [
-      {id:1, title:'LoFi Chill Beats', url:'https://www.youtube.com/embed/5qap5aO4i9A', kind:'music'},
-      {id:2, title:'Calm Piano Playlist', url:'https://www.youtube.com/embed/MkNeIUgNPQ8', kind:'music'},
-      {id:3, title:'10-Min Stress Relief Yoga', url:'https://www.youtube.com/embed/v7AYKMP6rOE', kind:'yoga'}
-    ];
-    localStorage.setItem(PLS_KEY, JSON.stringify(demo));
-  }
-  if(!localStorage.getItem(SESS_KEY)){
-    localStorage.setItem(SESS_KEY, JSON.stringify([]));
-  }
-}
-seedIfEmpty();
-
-/* ---------------------------
-   Authentication (localStorage)
-   --------------------------- */
-let currentUser = null;
-
-function loadUsers(){ return JSON.parse(localStorage.getItem(USERS_KEY) || '[]'); }
-function saveUsers(u){ localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
-function loadPlaylists(){ return JSON.parse(localStorage.getItem(PLS_KEY) || '[]'); }
-function savePlaylists(p){ localStorage.setItem(PLS_KEY, JSON.stringify(p)); }
-function loadSessions(){ return JSON.parse(localStorage.getItem(SESS_KEY) || '[]'); }
-function saveSessions(s){ localStorage.setItem(SESS_KEY, JSON.stringify(s)); }
-
-function setSignedAs(email){
-  qs('#signedAs').textContent = email ? `Signed in: ${email}` : 'Not signed in';
-  qs('#btnLogout').classList.toggle('hidden', !email);
-}
-function showStage(id){
-  qsa('.stage').forEach(el=>el.classList.remove('active'));
-  qs('#' + id).classList.add('active');
-}
-
-/* login/register handlers */
-qs('#btnRegister').addEventListener('click', ()=>{
-  const email = qs('#inputEmail').value.trim().toLowerCase();
-  const pass  = qs('#inputPass').value;
-  if(!email || !pass){ qs('#authMsg').textContent = 'Enter email & password to register.'; return; }
-  const users = loadUsers();
-  if(users.some(u=>u.email===email)){ qs('#authMsg').textContent = 'Email already registered. Please login.'; return; }
-  users.push({email, pass, isAdmin:false});
-  saveUsers(users);
-  qs('#authMsg').textContent = 'Registered. You may login now.';
-});
-qs('#btnLogin').addEventListener('click', ()=>{
-  const email = qs('#inputEmail').value.trim().toLowerCase();
-  const pass  = qs('#inputPass').value;
-  const users = loadUsers();
-  const u = users.find(x=>x.email===email && x.pass===pass);
-  if(!u){ qs('#authMsg').textContent = 'Invalid credentials.'; return; }
-  currentUser = u;
-  setSignedAs(u.email);
-  qs('#authMsg').textContent = `Welcome back, ${u.email}`;
-  // go to questions step
-  showStage('stage-questions');
-  renderAdminControls();
-});
-qs('#btnGuest').addEventListener('click', ()=>{
-  currentUser = {email:'guest', isAdmin:false};
-  setSignedAs('Guest');
-  showStage('stage-questions'); renderAdminControls();
-});
-qs('#btnLogout').addEventListener('click', ()=>{
-  currentUser = null;
-  setSignedAs('');
-  showStage('stage-auth');
-  qs('#inputEmail').value=''; qs('#inputPass').value='';
-  renderAdminControls();
-});
-
-/* ---------------------------
-   Assessment logic
-   --------------------------- */
-qs('#btnAssess').addEventListener('click', ()=>{
-  const q1 = qs('#q_sleep').value;
-  const q2 = qs('#q_work').value;
-  const q3 = qs('#q_anx').value;
-  if(!q1||!q2||!q3){ qs('#assessmentResult').textContent = 'Please answer all three questions.'; return; }
-
-  // scoring: 0..6
-  let score=0;
-  score += (q1==='good'?0:(q1==='avg'?1:2));
-  score += (q2==='manageable'?0:(q2==='stressful'?1:2));
-  score += (q3==='rarely'?0:(q3==='sometimes'?1:2));
-
-  let level, advice;
-  if(score<=2){ level='Low'; advice='Maintain healthy routines; short breathing or light music works well.'; }
-  else if(score<=4){ level='Moderate'; advice='Try music therapy, 5-minute breathing & light yoga.'; }
-  else { level='High'; advice='Prefer yoga sessions, longer breathing, and chat support. Consider professional help if overwhelmed.'; }
-
-  // save session
-  const sessions = loadSessions();
-  sessions.push({ user: currentUser?.email || 'guest', score: score*15, level, advice, ts: new Date().toISOString() });
-  saveSessions(sessions);
-
-  // update UI
-  qs('#assessmentResult').textContent = `Report: ${level} stress — ${advice}`;
-  // redirect to dashboard
-  qs('#treatmentAdvice').textContent = advice;
-  updateLatestPill(level, score*15);
-  renderPlaylists();
-  renderSessionsList();
-  updateChart();
-  showStage('stage-dashboard');
-});
-
-/* ---------------------------
-   Playlist admin & render
-   --------------------------- */
-function renderPlaylists(){
-  const pls = loadPlaylists();
-  const container = qs('#playlistsPanel');
-  container.innerHTML = '';
-  if(!pls.length){ container.innerHTML = '<div class="muted-small">No playlists yet.</div>'; return; }
-  // Render grouped by kind
-  const music = pls.filter(p=>p.kind==='music');
-  const yoga  = pls.filter(p=>p.kind==='yoga');
-
-  const makeGroup = (title, arr) => {
-    const wrap = document.createElement('div');
-    const h = document.createElement('h4'); h.textContent = title; h.style.margin='6px 0';
-    wrap.appendChild(h);
-    arr.forEach(p=>{
-      const card = document.createElement('div');
-      card.style.marginBottom='12px';
-      card.innerHTML = `<div style="display:flex;gap:8px;align-items:center">
-        <div style="flex:1"><strong>${p.title}</strong><div class="muted-small">${p.kind}</div></div>
-        <div style="display:flex;gap:6px">
-          <button class="btn ghost" data-play="${p.url}">Play</button>
-          ${currentUser?.isAdmin? `<button class="btn ghost" data-del="${p.id}">Delete</button>` : ''}
-        </div>
-      </div>`;
-      wrap.appendChild(card);
+    // Stress Chart
+    const ctx = document.getElementById('stressChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        datasets: [{
+          label: 'Stress Level',
+          data: [20,45,35,60,30,50,40],
+          borderColor: '#6366f1',
+          backgroundColor: 'rgba(99,102,241,0.12)',
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { labels: { color: '#6366f1' } } },
+        scales: { x: { ticks: { color: '#6366f1' } }, y: { ticks: { color: '#6366f1' }, beginAtZero: true, max: 100 } }
+      }
     });
-    return wrap;
-  };
 
-  if(music.length) container.appendChild(makeGroup('Music Playlists', music));
-  if(yoga.length) container.appendChild(makeGroup('Yoga Videos', yoga));
-
-  // attach handlers for play/delete
-  container.querySelectorAll('[data-play]').forEach(btn => {
-    btn.addEventListener('click', (e)=>{
-      const url = e.target.getAttribute('data-play');
-      // embed first playable video in therapy area — open a modal-like small player
-      openPlayer(url);
-    });
-  });
-  container.querySelectorAll('[data-del]').forEach(btn=>{
-    btn.addEventListener('click', (e)=>{
-      const idAttr = e.target.getAttribute('data-del');
-      if(!confirm('Delete this playlist?')) return;
-      const pls = loadPlaylists().filter(p=>p.id!=idAttr);
-      savePlaylists(pls);
-      renderPlaylists();
-    });
-  });
-}
-
-/* Open small player modal (simple) */
-function openPlayer(url){
-  // create overlay
-  const overlay = document.createElement('div');
-  overlay.style.position='fixed'; overlay.style.inset=0; overlay.style.background='rgba(0,0,0,0.6)';
-  overlay.style.display='grid'; overlay.style.placeItems='center'; overlay.style.zIndex=9999;
-  const box = document.createElement('div'); box.style.width='min(920px,96%)'; box.style.maxWidth='920px';
-  box.style.background='var(--panel)'; box.style.padding='12px'; box.style.borderRadius='12px';
-  const iframe = document.createElement('iframe'); iframe.width='100%'; iframe.height='520';
-  // normalize url to embed form if watch?v= exists
-  let embed = url;
-  if(url.includes('watch?v=')) embed = url.replace('watch?v=','embed/');
-  if(url.includes('youtube.com/') && !embed.includes('embed')) {
-    // leave as-is
-  }
-  iframe.src = embed;
-  const close = document.createElement('button'); close.textContent='Close'; close.className='btn ghost';
-  close.style.marginTop='10px';
-  close.addEventListener('click', ()=>document.body.removeChild(overlay));
-  box.appendChild(iframe); box.appendChild(close); overlay.appendChild(box); document.body.appendChild(overlay);
-}
-
-/* Admin panel render */
-function renderAdminControls(){
-  const adminControls = qs('#adminControls');
-  if(currentUser && currentUser.isAdmin){
-    adminControls.classList.remove('hidden');
-    qs('#plList').innerHTML = '';
-    renderPlaylists();
-  } else {
-    adminControls.classList.add('hidden');
-    qs('#plList').innerHTML = '<div class="muted-small">Sign in as admin to manage playlists.</div>';
-  }
-}
-
-/* Add playlist handler */
-qs('#btnAddPl').addEventListener('click', ()=>{
-  const title = qs('#plTitle').value.trim();
-  const url = qs('#plURL').value.trim();
-  const kind = qs('#plKind').value;
-  if(!title || !url){ alert('Provide title and URL'); return; }
-  const pls = loadPlaylists();
-  const id = Date.now();
-  pls.push({id, title, url, kind});
-  savePlaylists(pls);
-  qs('#plTitle').value=''; qs('#plURL').value='';
-  renderPlaylists();
-});
-
-/* refresh button */
-qs('#btnRefreshPl').addEventListener('click', ()=>renderPlaylists());
-
-/* ---------------------------
-   Chat logic (local rule-based)
-   --------------------------- */
-qs('#chatSend').addEventListener('click', sendChat);
-qs('#chatInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); sendChat(); } });
-
-function appendMessage(text, who='bot'){
-  const m = document.createElement('div'); m.className = 'msg ' + (who==='user'?'user':'bot');
-  m.textContent = text;
-  qs('#chatMessages').appendChild(m);
-  qs('#chatMessages').scrollTop = qs('#chatMessages').scrollHeight;
-}
-function sendChat(){
-  const text = qs('#chatInput').value.trim();
-  if(!text) return;
-  appendMessage(text, 'user');
-  qs('#chatInput').value='';
-  // local rule-based reply with small delay
-  appendMessage('...', 'bot');
-  setTimeout(()=>{
-    // remove the placeholder last bot "..."
-    const msgs = qsa('.messages .msg');
-    msgs[msgs.length-1].remove();
-
-    const reply = localBotReply(text);
-    appendMessage(reply, 'bot');
-  }, 650);
-}
-function localBotReply(msg){
-  const t = msg.toLowerCase();
-  if(/(anxious|panic|worry|worried)/.test(t)) return "I hear anxiety there. Try a 5-count breathing: inhale 4s → hold 4s → exhale 4s. Want a music playlist or breathing guide?";
-  if(/(tired|exhaust|sleep)/.test(t)) return "You sound tired — a short nap and gentle yoga may help. Would you like a 10-min yoga video?";
-  if(/(angry|frustrat)/.test(t)) return "Feeling angry is natural — step back for 2 minutes and do 5 deep breaths. Want a grounding exercise?";
-  if(/(help|sad|depressed)/.test(t)) return "I'm sorry you're feeling this way. Reaching out to someone trusted or a professional might help. Meanwhile we can do breathing or play calming music.";
-  // friendly fallback
-  return "Thanks for sharing. What's one small step you'd like to try in the next 10 minutes? (I can suggest music, breathing, or a yoga video.)";
-}
-
-/* ---------------------------
-   Sessions, Chart & UI helpers
-   --------------------------- */
-function updateLatestPill(level, numericScore){
-  const pill = qs('#latestPill');
-  if(level==='Low'){ pill.textContent = `Low • ${numericScore || 0}`; pill.className='pill low'; }
-  else if(level==='Moderate'){ pill.textContent = `Moderate • ${numericScore || 0}`; pill.className='pill mod'; }
-  else { pill.textContent = `High • ${numericScore || 0}`; pill.className='pill high'; }
-}
-
-function renderSessionsList(){
-  const sessions = loadSessions();
-  if(!sessions.length){ qs('#sessionList').textContent = 'No sessions yet.'; return; }
-  const html = sessions.slice().reverse().map(s=> {
-    const t = new Date(s.ts).toLocaleString();
-    return `<div style="margin-bottom:8px"><strong>${s.level}</strong> • ${s.score}pts • <span class="muted-small">${t}</span><div class="muted-small">${s.advice}</div></div>`;
-  }).join('');
-  qs('#sessionList').innerHTML = html;
-}
-
-/* Chart */
-let trendChart = null;
-function updateChart(){
-  const sessions = loadSessions();
-  const labels = sessions.map(s=> new Date(s.ts).toLocaleDateString());
-  const data = sessions.map(s=> s.score);
-  const ctx = qs('#trendChart').getContext('2d');
-  if(trendChart) { trendChart.data.labels = labels; trendChart.data.datasets[0].data = data; trendChart.update(); return; }
-  trendChart = new Chart(ctx, {
-    type:'line',
-    data:{
-      labels, datasets:[{label:'Stress Score', data, tension:0.3, fill:true, backgroundColor:'rgba(124,58,237,0.12)', borderColor:'#7c3aed', pointRadius:4}]
-    },
-    options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ suggestedMin:0, suggestedMax:100 } } }
-  });
-}
-
-/* ---------------------------
-   Quick actions
-   --------------------------- */
-qs('#btnStartBreath').addEventListener('click', ()=>startBoxBreathing(4));
-qs('#btnExport').addEventListener('click', ()=>{
-  const blob = new Blob([localStorage.getItem(SESS_KEY) || '[]'], {type:'application/json'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'zentrack_sessions.json'; a.click();
-});
-qs('#btnClearData').addEventListener('click', ()=>{
-  if(!confirm('Clear all local data (users, playlists, sessions)?')) return;
-  localStorage.removeItem(USERS_KEY); localStorage.removeItem(SESS_KEY); localStorage.removeItem(PLS_KEY);
-  location.reload();
-});
-
-/* Box breathing UI (small overlay) */
-function startBoxBreathing(n=4){
-  const overlay = document.createElement('div'); overlay.style.position='fixed'; overlay.style.inset=0; overlay.style.display='grid'; overlay.style.placeItems='center'; overlay.style.background='rgba(2,6,23,0.6)'; overlay.style.zIndex=9999;
-  const circle = document.createElement('div'); circle.style.width='210px'; circle.style.height='210px'; circle.style.borderRadius='999px'; circle.style.display='grid'; circle.style.placeItems='center'; circle.style.background='linear-gradient(90deg, rgba(124,58,237,0.12), rgba(34,211,238,0.06))'; circle.style.backdropFilter='blur(6px)';
-  const txt = document.createElement('div'); txt.style.fontWeight=800; txt.style.textAlign='center'; txt.textContent='Ready';
-  circle.appendChild(txt);
-  overlay.appendChild(circle);
-  document.body.appendChild(overlay);
-
-  let phase = 0;
-  let cycles = 0;
-  function step(){
-    const labels = ['Inhale','Hold','Exhale','Hold'];
-    let t = n;
-    txt.textContent = `${labels[phase]} ${t}s`;
-    const interval = setInterval(()=>{
-      t--; if(t>=0) txt.textContent = `${labels[phase]} ${t}s`;
-      if(t<0){ clearInterval(interval); phase=(phase+1)%4; if(phase===0){ cycles++; } if(cycles>=3){ document.body.removeChild(overlay); return; } step(); }
-    },1000);
-  }
-  step();
-}
-
-/* ---------------------------
-   On load: initial rendering
-   --------------------------- */
-(function init(){
-  // show admin controls if admin
-  renderAdminControls();
-  renderPlaylists();
-  renderSessionsList();
-  updateChart();
-  // if sessions exist set latest pill
-  const s = loadSessions(); if(s && s.length) updateLatestPill(s[s.length-1].level, s[s.length-1].score);
-})();
-</script>
-
+    // Show login on load
+    showSection('loginStage');
+  </script>
 </body>
 </html>
