@@ -372,6 +372,84 @@
       width: 100%;
       margin-top: 8px;
     }
+    .option-select-row {
+      display: flex;
+      gap: 12px;
+      margin: 18px 0 8px 0;
+    }
+    .option-select-btn {
+      flex: 1;
+      padding: 16px 0;
+      border-radius: 10px;
+      background: #f1f5f9;
+      color: var(--primary);
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: 2px solid var(--border);
+      cursor: pointer;
+      transition: background .18s, color .18s, border-color .18s, box-shadow .18s;
+      outline: none;
+      box-shadow: none;
+      text-align: center;
+      user-select: none;
+    }
+    .option-select-btn.selected, .option-select-btn:active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 2px 12px rgba(99,102,241,0.10);
+    }
+    .option-select-btn:hover {
+      background: #e0e7ff;
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+    html.dark .option-select-btn {
+      background: #23232a;
+      color: var(--primary);
+      border-color: var(--border);
+    }
+    html.dark .option-select-btn.selected, html.dark .option-select-btn:active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    html.dark .option-select-btn:hover {
+      background: #3730a3;
+      color: #fff;
+    }
+    .btn-result {
+      margin-top: 24px;
+      padding: 12px 28px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background .2s, transform .2s;
+      box-shadow: 0 2px 8px rgba(34,211,238,0.08);
+      display: block;
+      width: 100%;
+      max-width: 260px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .btn-result:hover {
+      opacity: 0.93;
+      transform: scale(1.04);
+      background: linear-gradient(90deg, var(--secondary), var(--primary));
+    }
+    nav[style*="display: none"] {
+      pointer-events: none;
+      opacity: 0;
+    }
+    nav[style*="display: flex"] {
+      pointer-events: auto;
+      opacity: 1;
+      transition: opacity .3s;
+    }
     @media (max-width: 900px) {
       .container { padding: 18px 2vw; }
       .dashboard-images { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
@@ -396,11 +474,11 @@
     </button>
   </header>
   <nav id="mainNav" style="display:none;">
-    <a href="#" id="navDashboard" class="active">Dashboard</a>
-    <a href="#" id="navTherapy">Therapy</a>
-    <a href="#" id="navAbout">About</a>
-    <a href="#" id="navContact">Contact</a>
-    <a href="#" onclick="logout()">Logout</a>
+    <a href="#" id="navDashboard" class="active" title="Go to your dashboard">🏠 Dashboard</a>
+    <a href="#" id="navTherapy" title="Explore music and yoga therapy">🧘 Therapy</a>
+    <a href="#" id="navAbout" title="Learn about ZenTrack">ℹ️ About</a>
+    <a href="#" id="navContact" title="Contact the ZenTrack team">✉️ Contact</a>
+    <a href="#" onclick="logout()" title="Logout from ZenTrack">🚪 Logout</a>
   </nav>
   <div class="container">
     <!-- Login -->
@@ -414,6 +492,17 @@
       <div style="margin-top:2em;color:var(--muted);font-size:1.05rem;">
         <b>New to ZenTrack?</b> Register to unlock personalized stress management tools, therapy resources, and your own dashboard.
       </div>
+    </section>
+    <!-- Sequential Anxiety Assessment -->
+    <section id="anxietyAssessment" class="card" style="display:none;">
+      <h2 style="color:var(--primary);">Anxiety Self-Assessment</h2>
+      <form id="anxietyForm" autocomplete="off">
+        <div id="anxietyQuestionBox"></div>
+        <div id="anxietyNavBtns" style="margin-top:1em;">
+          <button class="btn btn-secondary" type="button" id="prevQ" style="display:none;">Previous</button>
+        </div>
+        <button type="button" id="showResultBtn" class="btn-result" style="display:none;">Show Result</button>
+      </form>
     </section>
     <!-- Dashboard -->
     <section id="dashboardStage" class="card" style="display:none;">
@@ -436,9 +525,9 @@
           <button class="btn btn-primary">Go to Chat</button>
         </div>
         <div class="feature-card" onclick="showSection('stressChartSection')">
-          <h3>📊 Stress Graph</h3>
-          <p>Track your stress levels over time.</p>
-          <button class="btn btn-primary">View Graph</button>
+          <h3>📊 Result of Test</h3>
+          <p>See your latest stress test result and graph.</p>
+          <button class="btn btn-primary">View Result</button>
         </div>
       </div>
     </section>
@@ -511,6 +600,7 @@
     <section id="stressChartSection" class="card" style="display:none;">
       <h3 style="color:var(--secondary);">📊 Stress Graph Dashboard</h3>
       <canvas id="stressChart"></canvas>
+      <div id="stressResult" style="margin-top:1em;color:var(--muted);font-size:1.08rem;font-weight:600;"></div>
       <div style="margin-top:1em;color:var(--muted);font-size:0.98rem;">
         <b>Tip:</b> Track your stress levels daily to see your progress.
       </div>
@@ -532,32 +622,182 @@
       if (id === 'aboutStage') document.getElementById('navAbout').classList.add('active');
       if (id === 'contactStage') document.getElementById('navContact').classList.add('active');
     }
-    document.getElementById('navDashboard').onclick = function(){ showSection('dashboardStage'); };
-    document.getElementById('navTherapy').onclick = function(){ showSection('therapyStage'); };
-    document.getElementById('navAbout').onclick = function(){ showSection('aboutStage'); };
-    document.getElementById('navContact').onclick = function(){ showSection('contactStage'); };
 
-    // Login logic
+    // Only allow navigation if not in assessment
+    function navHandler(sectionId) {
+      return function(e) {
+        if (window.inAssessment) {
+          alert("Please complete the assessment before navigating.");
+          e.preventDefault();
+          return false;
+        }
+        showSection(sectionId);
+      }
+    }
+    document.getElementById('navDashboard').onclick = navHandler('dashboardStage');
+    document.getElementById('navTherapy').onclick = navHandler('therapyStage');
+    document.getElementById('navAbout').onclick = navHandler('aboutStage');
+    document.getElementById('navContact').onclick = navHandler('contactStage');
+
+    // Sequential Anxiety Assessment Logic with direct select options
+    const anxietyQuestions = [
+      "Do you often feel worried or afraid something bad will happen?",
+      "Do you feel nervous, tense, or find it hard to relax?",
+      "Do you have fears, like being alone, in the dark, in traffic, or around strangers or crowds?",
+      "Do you have trouble sleeping (falling asleep, staying asleep, or bad dreams)?",
+      "Do you find it hard to focus or remember things?",
+      "Do you often feel sad, lose interest in things you enjoy, or feel hopeless?",
+      "Do you get body pains, tight muscles, twitching, or grind your teeth?",
+      "Do you get strange feelings like blurred vision, ringing in your ears, hot/cold flashes, weakness, or tingling?",
+      "Do you notice your heart beating fast, pounding, skipping beats, or feel chest pain?",
+      "Do you have trouble breathing, feel short of breath, or feel like choking?",
+      "Do you have stomach problems (like nausea, stomach pain, constipation, diarrhea, or loss of appetite)?",
+      "Do you notice changes in bathroom habits or sex life (like frequent urination, low interest in sex, or changes with periods)?",
+      "Do you get physical stress symptoms like dry mouth, sweating, dizziness, headache, or feeling hot/cold suddenly?",
+      "Do you fidget, shake, pace, sigh a lot, or look tense when you are anxious?",
+      "Overall, how strong has your anxiety been this past week?"
+    ];
+    let anxietyAnswers = Array(anxietyQuestions.length).fill(null);
+    let currentQ = 0;
+    let inAssessment = false;
+    let latestAnxietyResult = "";
+
+    function renderAnxietyQuestion() {
+      inAssessment = true;
+      const box = document.getElementById('anxietyQuestionBox');
+      box.innerHTML = `
+        <div style="margin-bottom:1em;">
+          <label style="font-weight:500;">Q${currentQ+1}. ${anxietyQuestions[currentQ]}</label>
+          <div class="option-select-row">
+            ${[0,1,2,3,4].map(val => `
+              <div class="option-select-btn${anxietyAnswers[currentQ]===val?' selected':''}" 
+                data-value="${val}" tabindex="0">
+                ${val === 0 ? "Never" : val === 1 ? "Rarely" : val === 2 ? "Sometimes" : val === 3 ? "Often" : "Always"}
+                <div style="font-size:0.95em;color:var(--muted);margin-top:2px;">[${val}]</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        <div style="color:var(--muted);font-size:0.98rem;">Question ${currentQ+1} of ${anxietyQuestions.length}</div>
+      `;
+      document.getElementById('prevQ').style.display = currentQ > 0 ? '' : 'none';
+      document.getElementById('showResultBtn').style.display = "none";
+
+      // Add click event for direct select
+      document.querySelectorAll('.option-select-btn').forEach(btn => {
+        btn.onclick = function() {
+          document.querySelectorAll('.option-select-btn').forEach(b => b.classList.remove('selected'));
+          this.classList.add('selected');
+          anxietyAnswers[currentQ] = parseInt(this.getAttribute('data-value'), 10);
+
+          // Auto move to next question or show result button
+          if (currentQ < anxietyQuestions.length - 1) {
+            currentQ++;
+            setTimeout(renderAnxietyQuestion, 150);
+          } else {
+            // Show result button at the end
+            document.getElementById('showResultBtn').style.display = "block";
+          }
+        };
+        btn.onkeydown = function(e) {
+          if(e.key === "Enter" || e.key === " ") {
+            this.click();
+          }
+        }
+      });
+    }
+
+    document.getElementById('prevQ').onclick = function() {
+      if(currentQ > 0) currentQ--;
+      renderAnxietyQuestion();
+    };
+
+    // Show result button logic
+    document.getElementById('showResultBtn').onclick = function() {
+      let total = anxietyAnswers.reduce((a,b)=>a+(b||0),0);
+      let result = "";
+      if (total <= 10) result = "Minimal anxiety. Keep up your healthy habits!";
+      else if (total <= 20) result = "Mild anxiety. Try relaxation and self-care.";
+      else if (total <= 35) result = "Moderate anxiety. Consider talking to someone or using therapy tools.";
+      else result = "Severe anxiety. Please consider reaching out to a mental health professional.";
+      document.getElementById('anxietyForm').style.display = 'none';
+      latestAnxietyResult = `Your score: ${total} – ${result}`;
+      let lastAnxietyScore = Math.round((total / (anxietyQuestions.length * 4)) * 100);
+      window.stressChart.data.datasets[0].data[6] = lastAnxietyScore;
+      window.stressChart.update();
+
+      inAssessment = false;
+
+      setTimeout(() => {
+        // Show result in stress chart section and nav
+        document.getElementById('mainNav').style.display = 'flex';
+        showSection('stressChartSection');
+        document.getElementById('stressResult').innerText = latestAnxietyResult;
+        // Reset assessment for next time
+        document.getElementById('anxietyForm').style.display = '';
+        document.getElementById('showResultBtn').style.display = "none";
+        anxietyAnswers = Array(anxietyQuestions.length).fill(null);
+        currentQ = 0;
+        renderAnxietyQuestion();
+      }, 700);
+    };
+
+    // On login, redirect to sequential assessment and hide nav/login
     function simulateLogin(){
       const email = document.getElementById('username').value;
       const pass = document.getElementById('password').value;
       if(email && pass){
         document.getElementById('authResult').innerText = `Welcome ${email}`;
-        document.getElementById('mainNav').style.display = 'flex'; // Show nav after login
-        showSection('dashboardStage');
+        document.getElementById('mainNav').style.display = 'none';
+        document.getElementById('loginStage').style.display = 'none';
+        // Reset assessment state
+        anxietyAnswers = Array(anxietyQuestions.length).fill(null);
+        currentQ = 0;
+        renderAnxietyQuestion();
+        document.getElementById('anxietyForm').style.display = '';
+        document.getElementById('showResultBtn').style.display = "none";
+        showSection('anxietyAssessment');
       } else {
         document.getElementById('authResult').innerText = 'Please enter email and password';
       }
     }
+
     function simulateRegister(){
       const email = document.getElementById('username').value;
       document.getElementById('authResult').innerText = email ? `Registered new user: ${email}` : 'Enter email to register';
     }
+
     function logout(){
       showSection('loginStage');
-      document.getElementById('mainNav').style.display = 'none'; // Hide nav on logout
+      document.getElementById('mainNav').style.display = 'none';
+      document.getElementById('loginStage').style.display = 'block';
       document.querySelectorAll('#mainNav a').forEach(a => a.classList.remove('active'));
     }
+
+    // Chart.js initialization for stress graph
+    const ctx = document.getElementById('stressChart').getContext('2d');
+    window.stressChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        datasets: [{
+          label: 'Stress Level',
+          data: [20,45,35,60,30,50,40],
+          borderColor: '#6366f1',
+          backgroundColor: 'rgba(99,102,241,0.12)',
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { labels: { color: '#6366f1' } } },
+        scales: { 
+          x: { ticks: { color: '#6366f1' } }, 
+          y: { ticks: { color: '#6366f1' }, beginAtZero: true, max: 100 } 
+        }
+      }
+    });
 
     // Chat Bot
     async function sendMessageGemini() {
@@ -609,7 +849,7 @@
       const message = this.message.value;
       const subject = encodeURIComponent("ZenTrack Contact Form Submission");
       const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nMessage: ${message}`);
-      window.location.href = `mailto:yourmain123@gmail.com?subject=${subject}&body=${body}`;
+      window.location.href = `mailto:kajal2005agarwal@gmail.com?subject=${subject}&body=${body}`;
       document.getElementById('contactResult').innerText = "Thank you for contacting us! Your email client should open now.";
       this.reset();
     };
@@ -637,28 +877,6 @@
       setDarkMode(!document.documentElement.classList.contains('dark'));
     };
     if(localStorage.getItem('zentrack-dark') === '1') setDarkMode(true);
-
-    // Stress Chart
-    const ctx = document.getElementById('stressChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
-        datasets: [{
-          label: 'Stress Level',
-          data: [20,45,35,60,30,50,40],
-          borderColor: '#6366f1',
-          backgroundColor: 'rgba(99,102,241,0.12)',
-          fill: true,
-          tension: 0.3
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { labels: { color: '#6366f1' } } },
-        scales: { x: { ticks: { color: '#6366f1' } }, y: { ticks: { color: '#6366f1' }, beginAtZero: true, max: 100 } }
-      }
-    });
 
     // Show login on load
     showSection('loginStage');
