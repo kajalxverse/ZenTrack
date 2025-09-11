@@ -1,0 +1,5 @@
+- [x] Add EmailJS script to head
+- [x] Add EmailJS init in script section
+- [x] Modify contactForm onsubmit to use emailjs.send()
+- [x] Handle success and error messages
+- [ ] Update email in footer and contact section to match
