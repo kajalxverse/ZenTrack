@@ -408,42 +408,45 @@ def assess_stress():
     """
     Complete stress assessment with ML prediction
     Accepts anxiety questionnaire answers and/or HRV data
-    Returns stress level and therapy recommendations
     """
     try:
-        user_id = int(get_jwt_identity())
+        user_identity = get_jwt_identity()
+        user_id = int(user_identity)
         data = request.get_json()
         
-        user = User.query.get(user_id)
+        # Use session.get instead of deprecated query.get
+        user = db.session.get(User, user_id)
         if not user:
             return jsonify({'error': 'User not found'}), 404
         
-        # Get assessment data
-        anxiety_answers = data.get('answers', [])  # List of answer values (0-3)
-        rr_intervals = data.get('rr_intervals')  # Optional HRV data
+        anxiety_answers = data.get('answers', [])
+        rr_intervals = data.get('rr_intervals')
         
         if not anxiety_answers and not rr_intervals:
-            return jsonify({'error': 'Either anxiety answers or HRV data required'}), 400
+            return jsonify({'error': 'Insufficient data provided'}), 400
         
-        # Calculate anxiety score
-        anxiety_score = stress_detector.calculate_anxiety_score(anxiety_answers) if anxiety_answers else None
+        # Calculate anxiety score (raw sum 0-60)
+        anxiety_score = stress_detector.calculate_anxiety_score(anxiety_answers) if anxiety_answers else 10
         
-        # Predict stress level using ML
+        # Predict stress level
         prediction = stress_detector.predict_stress_level(
             anxiety_score=anxiety_score,
             rr_intervals=rr_intervals
         )
         
+        if not prediction or 'stress_level' not in prediction:
+            raise ValueError("Stress prediction engine failed")
+
         # Create stress session
         session = StressSession(
             user_id=user_id,
             stress_level=prediction['stress_level'],
-            confidence=prediction['confidence'] / 100,  # Convert to 0-1
+            confidence=float(prediction.get('confidence', 0)) / 100,
             model_version=stress_detector.model_type,
-            anxiety_score=prediction['anxiety_score']
+            anxiety_score=prediction.get('anxiety_score', anxiety_score)
         )
         db.session.add(session)
-        db.session.flush()  # Get session ID
+        db.session.commit() # Commit session first to ensure ID is generated
         
         # Save HRV data if provided
         if rr_intervals:
@@ -456,23 +459,24 @@ def assess_stress():
             db.session.add(hrv_data)
         
         # Save extracted features
-        hrv_features = prediction['hrv_features']
-        features = StressFeatures(
-            session_id=session.id,
-            mean_hr=hrv_features['mean_hr'],
-            sdnn=hrv_features['sdnn'],
-            rmssd=hrv_features['rmssd'],
-            lf_hf_ratio=hrv_features['lf_hf_ratio']
-        )
-        db.session.add(features)
+        hrv_features = prediction.get('hrv_features', {})
+        if hrv_features:
+            features = StressFeatures(
+                session_id=session.id,
+                mean_hr=hrv_features.get('mean_hr', 0),
+                sdnn=hrv_features.get('sdnn', 0),
+                rmssd=hrv_features.get('rmssd', 0),
+                lf_hf_ratio=hrv_features.get('lf_hf_ratio', 0)
+            )
+            db.session.add(features)
         
-        # Update user assessment data
+        # Update user profile
         user.has_completed_assessment = True
-        user.last_anxiety_score = prediction['anxiety_score']
+        user.last_anxiety_score = prediction.get('anxiety_score', anxiety_score)
         user.total_assessments = (user.total_assessments or 0) + 1
         user.last_assessment_date = datetime.utcnow()
         
-        # Log security event
+        # Log activity
         log = SecurityLog(
             user_id=user_id,
             action='stress_assessment',
@@ -481,10 +485,8 @@ def assess_stress():
             user_agent=request.headers.get('User-Agent', '')[:255]
         )
         db.session.add(log)
-        
         db.session.commit()
         
-        # Get therapy recommendations
         therapy_rec = stress_detector.recommend_therapy(prediction['stress_level'])
         
         return jsonify({
@@ -496,7 +498,8 @@ def assess_stress():
             'hrv_features': hrv_features,
             'therapy_recommendation': therapy_rec,
             'message': therapy_rec['message'],
-            'user': user.to_dict()
+            'user': user.to_dict(),
+            'success': True
         }), 200
         
     except Exception as e:
