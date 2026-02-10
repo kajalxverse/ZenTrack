@@ -80,6 +80,10 @@ data_exporter = DataExporter()
 # Setup logging
 app_logger, security_logger = setup_logging(app)
 
+# Initialize database on startup
+with app.app_context():
+    init_database()
+
 # ==================== Database Initialization ====================
 
 def init_database():
