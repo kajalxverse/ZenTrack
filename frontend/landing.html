@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="ZenTrack - AI-powered stress management and mental wellness platform. Track, manage, and reduce stress with personalized therapy sessions.">
+    <title>ZenTrack - AI-Powered Stress Management Platform</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3774/3774299.png">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./css/main.css">
+
+    <style>
+        /* Landing Page Specific Styles */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #E8D5C4 0%, #C9A88A 50%, #B08968 100%);
+            position: relative;
+            overflow: hidden;
+            padding: 2rem 1rem;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(-100px);
+            }
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            color: #342E28;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            color: #4A4039;
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .hero-emoji {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+            pointer-events: auto;
+            z-index: 10;
+            user-select: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6B8E76 0%, #52705F 100%);
+            color: white;
+            box-shadow: 0 10px 30px rgba(107, 142, 118, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #52705F 0%, #3D5447 100%);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(107, 142, 118, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+
+        .btn-secondary {
+            background: rgba(107, 142, 118, 0.15);
+            color: #342E28;
+            border: 2px solid #6B8E76;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(107, 142, 118, 0.25);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(107, 142, 118, 0.2);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+
+        .features {
+            padding: 6rem 2rem;
+            background: #F8F9FA;
+        }
+
+        .features-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1F2937;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: #6B7280;
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            color: #1F2937;
+            margin-bottom: 3rem;
+        }
+
+        .how-it-works {
+            padding: 6rem 2rem;
+            background: white;
+        }
+
+        .steps {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: #F8F9FA;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .step:hover {
+            background: #F1F3F5;
+            transform: translateX(10px);
+        }
+
+        .step-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #6B8E76;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .step-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #342E28;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-content p {
+            color: #6B5F54;
+            line-height: 1.7;
+        }
+
+        footer {
+            background: #342E28;
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        footer a {
+            color: #84A98C;
+            text-decoration: none;
+            margin: 0 1rem;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .step {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-emoji">🧘‍♀️</div>
+            <h1>Welcome to ZenTrack</h1>
+            <p>Your AI-Powered Mental Wellness Companion. Track stress, get personalized therapy, and achieve peace of
+                mind with science-backed techniques.</p>
+            <div class="cta-buttons">
+                <a href="login.html" class="btn-primary">Get Started Free</a>
+                <a href="#features" class="btn-secondary">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <h2 class="section-title">Powerful Features for Your Wellness</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>AI Chat Assistant</h3>
+                <p>Get instant support and personalized advice from our intelligent AI chatbot trained on mental
+                    wellness best practices.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Stress Analytics</h3>
+                <p>Track your stress levels with ML-powered assessments and visualize your progress with beautiful,
+                    insightful charts.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🧘</div>
+                <h3>Guided Therapy</h3>
+                <p>Access curated meditation, breathing exercises, yoga sessions, and music therapy tailored to your
+                    needs.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">💡</div>
+                <h3>Smart Recommendations</h3>
+                <p>Receive personalized therapy recommendations based on your stress levels and assessment results.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Mobile Responsive</h3>
+                <p>Access your wellness dashboard anywhere, anytime. Fully optimized for all devices and screen sizes.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Secure & Private</h3>
+                <p>Your data is encrypted and protected. We prioritize your privacy with industry-standard security
+                    measures.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <h2 class="section-title">How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Create Your Account</h3>
+                    <p>Sign up in seconds with just your email. No credit card required, completely free to start.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Complete Assessment</h3>
+                    <p>Take our quick anxiety assessment to understand your current stress levels and get personalized
+                        insights.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Get Personalized Plan</h3>
+                    <p>Receive customized therapy recommendations, meditation exercises, and wellness activities based
+                        on your needs.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Track Your Progress</h3>
+                    <p>Monitor your stress levels over time, chat with our AI assistant, and celebrate your wellness
+                        journey.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p style="font-size: 1.2rem; margin-bottom: 1rem;">Ready to start your wellness journey?</p>
+        <div style="margin: 2rem 0;">
+            <a href="login.html" class="btn-primary" style="padding: 0.8rem 2rem;">Get Started Now</a>
+        </div>
+        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
+            <a href="#privacy">Privacy Policy</a>
+            <a href="#terms">Terms of Service</a>
+            <a href="mailto:kajal2005agarwal@gmail.com">Contact</a>
+        </div>
+        <p style="margin-top: 2rem; opacity: 0.7;">© 2025 ZenTrack - All Rights Reserved</p>
+    </footer>
+</body>
+
+</html>

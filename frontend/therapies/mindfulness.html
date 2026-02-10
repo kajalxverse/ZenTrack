@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mindfulness - ZenTrack</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #6B8E76 0%, #52705F 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: #6B8E76;
+        }
+
+        .hero {
+            text-align: center;
+            color: white;
+            padding: 3rem 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .mindfulness-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .mindfulness-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .mindfulness-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .mindfulness-content {
+            padding: 2.5rem;
+        }
+
+        .mindfulness-card h3 {
+            color: #1e293b;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .mindfulness-card p {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #6B8E76 0%, #52705F 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="../therapies.html" class="back-btn">← Back to Therapies</a>
+
+        <div class="hero">
+            <h1>🌟 Mindfulness Practice</h1>
+            <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto;">Be present in the moment and cultivate
+                awareness through mindfulness exercises</p>
+        </div>
+
+        <div class="mindfulness-grid">
+            <div class="mindfulness-card">
+                <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&h=400&fit=crop"
+                    alt="Mindful Eating" class="mindfulness-image">
+                <div class="mindfulness-content">
+                    <h3>🍽️ Mindful Eating</h3>
+                    <p>Practice eating with full awareness, savoring each bite and appreciating your food.</p>
+                    <button class="start-btn"
+                        onclick="window.open('https://www.youtube.com/watch?v=6p_yaNFSYao', '_blank')">Learn
+                        More</button>
+                </div>
+            </div>
+
+            <div class="mindfulness-card">
+                <img src="https://images.unsplash.com/photo-1447452001602-7090c7ab2db3?w=800&h=400&fit=crop"
+                    alt="Walking Meditation" class="mindfulness-image">
+                <div class="mindfulness-content">
+                    <h3>🚶 Walking Meditation</h3>
+                    <p>Combine movement with mindfulness by focusing on each step and your surroundings.</p>
+                    <button class="start-btn"
+                        onclick="window.open('https://www.youtube.com/watch?v=vHqN7jPgdVs', '_blank')">Learn
+                        More</button>
+                </div>
+            </div>
+
+            <div class="mindfulness-card">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&h=400&fit=crop"
+                    alt="Mindful Listening" class="mindfulness-image">
+                <div class="mindfulness-content">
+                    <h3>👂 Mindful Listening</h3>
+                    <p>Improve relationships by practicing active, non-judgmental listening.</p>
+                    <button class="start-btn"
+                        onclick="window.open('https://www.youtube.com/watch?v=cEqZthCaMpo', '_blank')">Learn
+                        More</button>
+                </div>
+            </div>
+
+            <div class="mindfulness-card">
+                <img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&h=400&fit=crop"
+                    alt="Gratitude Journal" class="mindfulness-image">
+                <div class="mindfulness-content">
+                    <h3>📝 Gratitude Journal</h3>
+                    <p>Daily practice of noting things you're grateful for to shift focus to positivity.</p>
+                    <button class="start-btn"
+                        onclick="window.open('https://www.youtube.com/watch?v=WPPPFqsECz0', '_blank')">Learn
+                        More</button>
+                </div>
+            </div>
+
+            <div class="mindfulness-card">
+                <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&h=400&fit=crop"
+                    alt="Morning Routine" class="mindfulness-image">
+                <div class="mindfulness-content">
+                    <h3>🌅 Morning Routine</h3>
+                    <p>Start your day mindfully with intention-setting and awareness practices.</p>
+                    <button class="start-btn"
+                        onclick="window.open('https://www.youtube.com/watch?v=inpok4MKVLM', '_blank')">Learn
+                        More</button>
+                </div>
+            </div>
+
+            <div class="mindfulness-card">
+                <img src="https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=800&h=400&fit=crop"
+                    alt="Evening Reflection" class="mindfulness-image">
+                <div class="mindfulness-content">
+                    <h3>🌙 Evening Reflection</h3>
+                    <p>End your day with mindful reflection on experiences and emotions.</p>
+                    <button class="start-btn"
+                        onclick="window.open('https://www.youtube.com/watch?v=aEqlQvczMJQ', '_blank')">Learn
+                        More</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

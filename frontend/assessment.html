@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ZenTrack Stress Assessment - Evaluate your current stress levels">
+    <title>Assessment - ZenTrack</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3774/3774299.png">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./css/main.css">
+
+    <style>
+        .assessment-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .assessment-header {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            padding: 2.5rem 2rem;
+            border-radius: var(--border-radius-lg);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            background: var(--gray-200);
+            height: 8px;
+            border-radius: 50px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+
+        .question-card {
+            background: var(--bg-primary);
+            padding: 2.5rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2rem;
+            animation: slideUp 0.3s ease;
+        }
+
+        .question-number {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .option-btn {
+            padding: 1.25rem 1.5rem;
+            background: var(--gray-100);
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
+            text-align: left;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary);
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .option-btn.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+        }
+
+        .result-card {
+            background: var(--bg-primary);
+            padding: 3rem 2rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+
+        .result-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-score {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .result-level {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        .recommendation-box {
+            background: var(--gray-100);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .recommendation-box h3 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .recommendation-box ul {
+            list-style-position: inside;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-logo">🧘‍♀️</span>
+            <span class="sidebar-title">ZenTrack</span>
+        </div>
+
+        <nav>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a href="dashboard.html" class="sidebar-link">
+                        <span class="sidebar-icon">🏠</span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="assessment.html" class="sidebar-link active">
+                        <span class="sidebar-icon">📋</span>
+                        <span>Assessment</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="chat.html" class="sidebar-link">
+                        <span class="sidebar-icon">💬</span>
+                        <span>AI Chat</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="therapies.html" class="sidebar-link">
+                        <span class="sidebar-icon">🧘</span>
+                        <span>Therapy</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="analytics.html" class="sidebar-link">
+                        <span class="sidebar-icon">📊</span>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="profile.html" class="sidebar-link">
+                        <span class="sidebar-icon">👤</span>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" style="margin-top: auto;">
+                    <a href="#" class="sidebar-link" onclick="handleLogout(event)">
+                        <span class="sidebar-icon">🚪</span>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <div class="assessment-container">
+            <!-- Header -->
+            <div class="assessment-header">
+                <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">📋 Anxiety Self-Assessment</h1>
+                <p style="opacity: 0.95;">Answer these questions to evaluate your current anxiety levels</p>
+            </div>
+
+            <!-- Assessment Section -->
+            <div id="assessmentSection">
+                <!-- Progress Bar -->
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+
+                <!-- Real-time Stress Meter -->
+                <div class="question-card" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Current
+                            Stress Level</div>
+                        <div style="font-size: 3rem; font-weight: 800; margin-bottom: 0.5rem;" id="realtimeStress">0%
+                        </div>
+                        <div style="font-size: 1rem; font-weight: 600;" id="realtimeLevel">Not Assessed</div>
+                    </div>
+                </div>
+
+                <!-- Question Card -->
+                <div class="question-card" id="questionCard">
+                    <div class="question-number" id="questionNumber">Question 1 of 15</div>
+                    <div class="question-text" id="questionText">Loading...</div>
+                    <div class="options-grid" id="optionsGrid"></div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" style="display: none;">
+                        ← Previous
+                    </button>
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>
+                        Next →
+                    </button>
+                    <button class="btn btn-success" id="submitBtn" onclick="submitAssessment()" style="display: none;"
+                        disabled>
+                        Submit Assessment
+                    </button>
+                </div>
+            </div>
+
+            <!-- Result Section -->
+            <div id="resultSection" style="display: none;">
+                <div class="result-card">
+                    <div class="result-icon" id="resultIcon">🎯</div>
+                    <div class="result-score" id="resultScore">--</div>
+                    <div class="result-level" id="resultLevel">--</div>
+                    <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 2rem;" id="resultMessage">
+                        Your assessment has been completed.
+                    </p>
+
+                    <div class="recommendation-box" id="recommendationBox">
+                        <h3>💡 Recommendations</h3>
+                        <ul id="recommendationList">
+                            <li>Loading recommendations...</li>
+                        </ul>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+                        <button class="btn btn-primary" onclick="window.location.href='dashboard.html'">
+                            Go to Dashboard
+                        </button>
+                        <button class="btn btn-secondary" onclick="retakeAssessment()">
+                            Retake Assessment
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+
+    <!-- Scripts -->
+    <script src="./js/config.js"></script>
+    <script src="./js/api.js"></script>
+    <script>
+        // Assessment Questions
+        const questions = [
+            { text: "Do you often feel worried or afraid something bad will happen?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you feel nervous, tense, or find it hard to relax?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you have fears, like being alone, in the dark, in traffic, or around strangers or crowds?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you have trouble sleeping (falling asleep, staying asleep, or bad dreams)?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you find it hard to focus or remember things?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you often feel sad, lose interest in things you enjoy, or feel hopeless?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you get body pains, tight muscles, twitching, or grind your teeth?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you get strange feelings like blurred vision, ringing in your ears, hot/cold flashes, weakness, or tingling?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you notice your heart beating fast, pounding, skipping beats, or feel chest pain?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you have trouble breathing, feel short of breath, or feel like choking?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you have stomach problems (like nausea, stomach pain, constipation, diarrhea, or loss of appetite)?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you notice changes in bathroom habits or sex life (like frequent urination, low interest in sex, or changes with periods)?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you get physical stress symptoms like dry mouth, sweating, dizziness, headache, or feeling hot/cold suddenly?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you fidget, shake, pace, sigh a lot, or look tense when you are anxious?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Overall, how strong has your anxiety been this past week?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] }
+        ];
+
+        let currentQuestion = 0;
+        let answers = [];
+
+        // Toggle Sidebar
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Handle Logout
+        function handleLogout(event) {
+            event.preventDefault();
+            if (confirm('Are you sure you want to logout?')) {
+                logout();
+            }
+        }
+
+        // Render Question
+        function renderQuestion() {
+            const question = questions[currentQuestion];
+
+            document.getElementById('questionNumber').textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+            document.getElementById('questionText').textContent = question.text;
+
+            const optionsGrid = document.getElementById('optionsGrid');
+            optionsGrid.innerHTML = question.options.map((option, index) => `
+                <button class="option-btn ${answers[currentQuestion] === index ? 'selected' : ''}" onclick="selectOption(${index})">
+                    ${option}
+                </button>
+            `).join('');
+
+            // Update progress
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            // Update buttons - only show Previous button
+            document.getElementById('prevBtn').style.display = currentQuestion > 0 ? 'block' : 'none';
+            document.getElementById('nextBtn').style.display = 'none'; // Hide Next button
+            document.getElementById('submitBtn').style.display = currentQuestion === questions.length - 1 ? 'block' : 'none';
+
+            // Enable/disable submit based on answer
+            const hasAnswer = answers[currentQuestion] !== undefined;
+            document.getElementById('submitBtn').disabled = !hasAnswer;
+        }
+
+        // Calculate and update real-time stress
+        function updateRealtimeStress() {
+            const answeredCount = answers.filter(a => a !== undefined).length;
+
+            if (answeredCount === 0) {
+                document.getElementById('realtimeStress').textContent = '0%';
+                document.getElementById('realtimeLevel').textContent = 'Not Assessed';
+                document.getElementById('realtimeStress').style.color = 'var(--text-primary)';
+                return;
+            }
+
+            const totalScore = answers.reduce((sum, val) => sum + (val || 0), 0);
+            const maxScore = 60; // 15 questions × 4 max score
+            const percentage = Math.round((totalScore / maxScore) * 100);
+
+            let level, color;
+            if (percentage <= 25) {
+                level = 'Low Stress';
+                color = '#10b981';
+            } else if (percentage <= 50) {
+                level = 'Moderate Stress';
+                color = '#f59e0b';
+            } else {
+                level = 'High Stress';
+                color = '#ef4444';
+            }
+
+            document.getElementById('realtimeStress').textContent = percentage + '%';
+            document.getElementById('realtimeLevel').textContent = level;
+            document.getElementById('realtimeStress').style.color = color;
+            document.getElementById('realtimeLevel').style.color = color;
+        }
+
+        // Select Option - Auto-advance to next question
+        function selectOption(index) {
+            answers[currentQuestion] = index;
+
+            // Visual feedback
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            buttons[index].classList.add('selected');
+
+            // Update real-time stress
+            updateRealtimeStress();
+
+            // Auto-advance after a short delay for visual feedback
+            setTimeout(() => {
+                if (currentQuestion < questions.length - 1) {
+                    currentQuestion++;
+                    renderQuestion();
+                } else {
+                    // On last question, just update the submit button
+                    renderQuestion();
+                }
+            }, 300);
+        }
+
+        // Next Question
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            }
+        }
+
+        // Previous Question
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+            }
+        }
+
+        // Submit Assessment
+        async function submitAssessment() {
+            if (answers.length !== questions.length || answers.some(a => a === undefined)) {
+                alert('Please answer all questions before submitting.');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').textContent = 'Submitting...';
+
+            try {
+                const result = await submitStressAssessment(answers);
+
+                if (result.success && result.data) {
+                    showResults(result.data);
+                } else {
+                    alert('Failed to submit assessment. Please try again.');
+                    document.getElementById('submitBtn').disabled = false;
+                    document.getElementById('submitBtn').textContent = 'Submit Assessment';
+                }
+            } catch (error) {
+                console.error('Submit error:', error);
+                alert('An error occurred. Please try again.');
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('submitBtn').textContent = 'Submit Assessment';
+            }
+        }
+
+        // Show Results
+        function showResults(data) {
+            document.getElementById('assessmentSection').style.display = 'none';
+            document.getElementById('resultSection').style.display = 'block';
+
+            const score = data.anxiety_score || 0;
+            const level = data.stress_level || 'Unknown';
+
+            // Set icon based on level
+            const icons = {
+                'Low': '😊',
+                'Moderate': '😐',
+                'High': '😰'
+            };
+            document.getElementById('resultIcon').textContent = icons[level] || '🎯';
+
+            // Set score color
+            const colors = {
+                'Low': '#10b981',
+                'Moderate': '#f59e0b',
+                'High': '#ef4444'
+            };
+            const scoreElement = document.getElementById('resultScore');
+            scoreElement.textContent = score + '%';
+            scoreElement.style.color = colors[level] || '#667eea';
+
+            document.getElementById('resultLevel').textContent = level + ' Stress';
+            document.getElementById('resultLevel').style.color = colors[level] || '#667eea';
+
+            // Set message
+            const messages = {
+                'Low': 'Great job! Your stress levels are well-managed.',
+                'Moderate': 'Your stress levels are moderate. Consider some relaxation techniques.',
+                'High': 'Your stress levels are high. We recommend seeking support and practicing stress management.'
+            };
+            document.getElementById('resultMessage').textContent = messages[level] || 'Assessment completed.';
+
+            // Set recommendations
+            const list = document.getElementById('recommendationList');
+            if (data.therapy_recommendation) {
+                const rec = data.therapy_recommendation;
+                // Handle both 'activities' and 'therapies' arrays
+                const items = rec.activities || rec.therapies || [];
+
+                if (items.length > 0) {
+                    list.innerHTML = items.map(activity => `<li>${activity}</li>`).join('');
+                } else {
+                    // Fallback recommendations based on stress level
+                    const fallbackRecs = {
+                        'Low': ['Continue your healthy habits', 'Try calming music therapy', 'Practice light meditation'],
+                        'Moderate': ['Practice yoga or breathing exercises', 'Listen to relaxing music', 'Try guided meditation'],
+                        'High': ['Talk to our AI chatbot for support', 'Practice deep breathing exercises', 'Consider professional counseling']
+                    };
+                    const recs = fallbackRecs[level] || fallbackRecs['Moderate'];
+                    list.innerHTML = recs.map(r => `<li>${r}</li>`).join('');
+                }
+            } else {
+                // Default recommendations if no data
+                list.innerHTML = `
+                    <li>Practice deep breathing exercises</li>
+                    <li>Try meditation or yoga</li>
+                    <li>Listen to calming music</li>
+                    <li>Talk to our AI chatbot</li>
+                `;
+            }
+        }
+
+        // Retake Assessment
+        function retakeAssessment() {
+            currentQuestion = 0;
+            answers = [];
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('assessmentSection').style.display = 'block';
+            renderQuestion();
+        }
+
+        // Initialize
+        (async function init() {
+            const user = await initProtectedPage();
+            if (user) {
+                renderQuestion();
+            }
+        })();
+    </script>
+</body>
+
+</html>

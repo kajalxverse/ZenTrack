@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ZenTrack Dashboard - Track your stress levels and manage your wellness">
+    <title>Dashboard - ZenTrack</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3774/3774299.png">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./css/main.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            transition: transform var(--transition-base);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card.success {
+            background: linear-gradient(135deg, var(--success), #059669);
+        }
+
+        .stat-card.warning {
+            background: linear-gradient(135deg, var(--warning), #d97706);
+        }
+
+        .stat-card.info {
+            background: linear-gradient(135deg, var(--info), #2563eb);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-card {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            border: 2px solid transparent;
+        }
+
+        .action-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .action-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .action-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .action-desc {
+            font-size: 0.9rem;
+            color: var(--text-tertiary);
+        }
+
+        .chart-container {
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .welcome-banner {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+        }
+
+        .welcome-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-text {
+            color: var(--text-secondary);
+        }
+
+        .activity-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .activity-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            font-size: 1.5rem;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .activity-time {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            z-index: 998;
+        }
+
+        @media (max-width: 1024px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-logo">🧘‍♀️</span>
+            <span class="sidebar-title">ZenTrack</span>
+        </div>
+
+        <nav>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a href="dashboard.html" class="sidebar-link active">
+                        <span class="sidebar-icon">🏠</span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="assessment.html" class="sidebar-link">
+                        <span class="sidebar-icon">📋</span>
+                        <span>Assessment</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="chat.html" class="sidebar-link">
+                        <span class="sidebar-icon">💬</span>
+                        <span>AI Chat</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="therapies.html" class="sidebar-link">
+                        <span class="sidebar-icon">🧘</span>
+                        <span>Therapy</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="analytics.html" class="sidebar-link">
+                        <span class="sidebar-icon">📊</span>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="profile.html" class="sidebar-link">
+                        <span class="sidebar-icon">👤</span>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" style="margin-top: auto;">
+                    <a href="#" class="sidebar-link" onclick="handleLogout(event)">
+                        <span class="sidebar-icon">🚪</span>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <h2 class="welcome-title">Welcome back, <span id="userName">User</span>! 👋</h2>
+            <p class="welcome-text">Here's your wellness overview for today. Keep up the great work!</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🧠</div>
+                <div class="stat-value" id="stressScore">--</div>
+                <div class="stat-label">Current Stress Level</div>
+            </div>
+
+            <div class="stat-card success">
+                <div class="stat-icon">📋</div>
+                <div class="stat-value" id="totalAssessments">0</div>
+                <div class="stat-label">Total Assessments</div>
+            </div>
+
+            <div class="stat-card warning">
+                <div class="stat-icon">💬</div>
+                <div class="stat-value" id="chatCount">0</div>
+                <div class="stat-label">Chat Sessions</div>
+            </div>
+
+            <div class="stat-card info">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-value" id="streakDays">0</div>
+                <div class="stat-label">Day Streak</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Quick Actions</h3>
+        <div class="quick-actions">
+            <div class="action-card" onclick="window.location.href='assessment.html'">
+                <div class="action-icon">📝</div>
+                <div class="action-title">Take Assessment</div>
+                <div class="action-desc">Check your stress levels</div>
+            </div>
+
+            <div class="action-card" onclick="window.location.href='chat.html'">
+                <div class="action-icon">🤖</div>
+                <div class="action-title">Chat with AI</div>
+                <div class="action-desc">Get instant support</div>
+            </div>
+
+            <div class="action-card" onclick="window.location.href='therapies.html'">
+                <div class="action-icon">🧘‍♀️</div>
+                <div class="action-title">Start Therapy</div>
+                <div class="action-desc">Meditation & exercises</div>
+            </div>
+
+            <div class="action-card" onclick="window.location.href='analytics.html'">
+                <div class="action-icon">📈</div>
+                <div class="action-title">View Analytics</div>
+                <div class="action-desc">Track your progress</div>
+            </div>
+        </div>
+
+        <!-- Stress Trend Chart -->
+        <div class="chart-container">
+            <h3 style="margin-bottom: 1.5rem; color: var(--text-primary);">📊 Stress Trend (Last 7 Days)</h3>
+            <canvas id="stressTrendChart"></canvas>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Recent Activity</h3>
+            </div>
+            <div class="card-body">
+                <ul class="activity-list" id="activityList">
+                    <li class="activity-item">
+                        <span class="activity-icon">⏳</span>
+                        <div class="activity-content">
+                            <div class="activity-title">Loading activities...</div>
+                            <div class="activity-time">Please wait</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+
+    <!-- Scripts -->
+    <script src="./js/config.js"></script>
+    <script src="./js/api.js"></script>
+    <script>
+        let stressChart = null;
+
+        // Toggle Sidebar
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Handle Logout
+        function handleLogout(event) {
+            event.preventDefault();
+            if (confirm('Are you sure you want to logout?')) {
+                logout();
+            }
+        }
+
+        // Load Dashboard Data
+        async function loadDashboard() {
+            try {
+                // Get current user
+                const user = getCurrentUser();
+                if (user) {
+                    document.getElementById('userName').textContent = user.name || user.email.split('@')[0];
+
+                    // Update stats
+                    if (user.last_anxiety_score !== null && user.last_anxiety_score !== undefined) {
+                        document.getElementById('stressScore').textContent = user.last_anxiety_score + '%';
+                    }
+
+                    if (user.total_assessments !== null && user.total_assessments !== undefined) {
+                        document.getElementById('totalAssessments').textContent = user.total_assessments;
+                    }
+                }
+
+                // Load stress analytics
+                const analyticsResult = await getStressAnalytics(7);
+                if (analyticsResult.success) {
+                    renderStressChart(analyticsResult.data);
+                }
+
+                // Load chat history count
+                const chatResult = await getChatHistory(100);
+                if (chatResult.success && chatResult.data.history) {
+                    document.getElementById('chatCount').textContent = chatResult.data.count || 0;
+                }
+
+                // Load recent activity
+                loadRecentActivity();
+
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        // Render Stress Chart
+        function renderStressChart(analytics) {
+            const ctx = document.getElementById('stressTrendChart');
+
+            if (!analytics || !analytics.timeline || analytics.timeline.length === 0) {
+                // Hide canvas and show message
+                ctx.style.display = 'none';
+                let messageDiv = ctx.parentElement.querySelector('.no-data-message');
+                if (!messageDiv) {
+                    messageDiv = document.createElement('p');
+                    messageDiv.className = 'no-data-message';
+                    messageDiv.style.cssText = 'text-align: center; color: var(--text-tertiary); padding: 2rem;';
+                    ctx.parentElement.appendChild(messageDiv);
+                }
+                messageDiv.textContent = 'No data available yet. Complete an assessment to see your stress trends.';
+                messageDiv.style.display = 'block';
+                return;
+            }
+
+            // Show canvas and hide message if it exists
+            ctx.style.display = 'block';
+            const messageDiv = ctx.parentElement.querySelector('.no-data-message');
+            if (messageDiv) {
+                messageDiv.style.display = 'none';
+            }
+
+            // Destroy existing chart
+            if (stressChart) {
+                stressChart.destroy();
+            }
+
+            const labels = analytics.timeline.map(item => {
+                const date = new Date(item.date);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            });
+
+            const data = analytics.timeline.map(item => item.anxiety_score || 0);
+
+            stressChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Stress Level',
+                        data: data,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.08)',
+                        borderWidth: 2.5,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: '#667eea',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointHoverBackgroundColor: '#667eea',
+                        pointHoverBorderColor: '#ffffff',
+                        pointHoverBorderWidth: 2,
+                        cubicInterpolationMode: 'monotone',
+                        spanGaps: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                            padding: 12,
+                            titleFont: { size: 13, weight: '600' },
+                            bodyFont: { size: 12 },
+                            borderColor: 'rgba(102, 126, 234, 0.3)',
+                            borderWidth: 1,
+                            displayColors: false,
+                            callbacks: {
+                                label: function (context) {
+                                    return 'Stress: ' + context.parsed.y + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: { size: 11 },
+                                color: '#78716c'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: { size: 11 },
+                                color: '#78716c',
+                                callback: function (value) {
+                                    return value + '%';
+                                },
+                                stepSize: 20
+                            }
+                        }
+                    },
+                    elements: {
+                        line: {
+                            borderJoinStyle: 'round'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load Recent Activity
+        async function loadRecentActivity() {
+            const activityList = document.getElementById('activityList');
+            const activities = [];
+
+            try {
+                // Get recent sessions
+                const sessionsResult = await getStressSessions(5);
+                if (sessionsResult.success && sessionsResult.data.sessions) {
+                    sessionsResult.data.sessions.forEach(session => {
+                        activities.push({
+                            icon: '📋',
+                            title: `Completed stress assessment - ${session.stress_level} stress`,
+                            time: new Date(session.created_at).toLocaleString()
+                        });
+                    });
+                }
+
+                // Get recent chats
+                const chatResult = await getChatHistory(3);
+                if (chatResult.success && chatResult.data.history) {
+                    chatResult.data.history.forEach(chat => {
+                        activities.push({
+                            icon: '💬',
+                            title: 'Chatted with AI assistant',
+                            time: new Date(chat.timestamp).toLocaleString()
+                        });
+                    });
+                }
+
+                // Sort by time (most recent first)
+                activities.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+                // Render activities
+                if (activities.length === 0) {
+                    activityList.innerHTML = `
+                        <li class="activity-item">
+                            <span class="activity-icon">📭</span>
+                            <div class="activity-content">
+                                <div class="activity-title">No recent activity</div>
+                                <div class="activity-time">Start by taking an assessment or chatting with our AI</div>
+                            </div>
+                        </li>
+                    `;
+                } else {
+                    activityList.innerHTML = activities.slice(0, 5).map(activity => `
+                        <li class="activity-item">
+                            <span class="activity-icon">${activity.icon}</span>
+                            <div class="activity-content">
+                                <div class="activity-title">${activity.title}</div>
+                                <div class="activity-time">${activity.time}</div>
+                            </div>
+                        </li>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading activity:', error);
+            }
+        }
+
+        // Initialize Dashboard
+        (async function init() {
+            const user = await initProtectedPage();
+            if (user) {
+                loadDashboard();
+            }
+        })();
+    </script>
+</body>
+
+</html>

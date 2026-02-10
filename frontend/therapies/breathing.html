@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breathing Exercises - ZenTrack</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #6B8E76 0%, #52705F 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: #6B8E76;
+        }
+
+        .hero {
+            text-align: center;
+            color: white;
+            padding: 3rem 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .breathing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .breathing-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .breathing-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .breathing-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .breathing-content {
+            padding: 2.5rem;
+        }
+
+        .breathing-card h3 {
+            color: #1e293b;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .breathing-card p {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .practice-btn {
+            background: linear-gradient(135deg, #6B8E76 0%, #52705F 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="../therapies.html" class="back-btn">← Back to Therapies</a>
+
+        <div class="hero">
+            <h1>💨 Breathing Exercises</h1>
+            <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto;">Master the art of breath control to reduce
+                stress, increase energy, and improve overall well-being</p>
+        </div>
+
+        <div class="breathing-grid">
+            <div class="breathing-card">
+                <img src="https://images.unsplash.com/photo-1545389336-cf090694435e?w=800&h=400&fit=crop"
+                    alt="Box Breathing" class="breathing-image">
+                <div class="breathing-content">
+                    <h3>🌬️ Box Breathing</h3>
+                    <p>A powerful stress-relief technique used by Navy SEALs. Breathe in for 4, hold for 4, out for 4,
+                        hold for 4.</p>
+                    <button class="practice-btn"
+                        onclick="window.location.href='breathing-timer.html?exercise=box'">Practice Now</button>
+                </div>
+            </div>
+
+            <div class="breathing-card">
+                <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&h=400&fit=crop"
+                    alt="Pranayama" class="breathing-image">
+                <div class="breathing-content">
+                    <h3>🧘 Pranayama</h3>
+                    <p>Ancient yogic breathing technique to balance energy, calm the mind, and improve respiratory
+                        function.</p>
+                    <button class="practice-btn"
+                        onclick="window.location.href='breathing-timer.html?exercise=pranayama'">Practice Now</button>
+                </div>
+            </div>
+
+            <div class="breathing-card">
+                <img src="https://images.unsplash.com/photo-1447452001602-7090c7ab2db3?w=800&h=400&fit=crop"
+                    alt="4-7-8 Breathing" class="breathing-image">
+                <div class="breathing-content">
+                    <h3>😌 4-7-8 Breathing</h3>
+                    <p>Dr. Weil's relaxation technique: Inhale for 4, hold for 7, exhale for 8. Perfect for sleep and
+                        anxiety.</p>
+                    <button class="practice-btn"
+                        onclick="window.location.href='breathing-timer.html?exercise=478'">Practice Now</button>
+                </div>
+            </div>
+
+            <div class="breathing-card">
+                <img src="https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=800&h=400&fit=crop"
+                    alt="Diaphragmatic Breathing" class="breathing-image">
+                <div class="breathing-content">
+                    <h3>🌊 Diaphragmatic Breathing</h3>
+                    <p>Deep belly breathing to activate the parasympathetic nervous system and promote relaxation.</p>
+                    <button class="practice-btn"
+                        onclick="window.location.href='breathing-timer.html?exercise=diaphragmatic'">Practice
+                        Now</button>
+                </div>
+            </div>
+
+            <div class="breathing-card">
+                <img src="https://images.unsplash.com/photo-1588286840104-8957b019727f?w=800&h=400&fit=crop"
+                    alt="Wim Hof Method" class="breathing-image">
+                <div class="breathing-content">
+                    <h3>⚡ Wim Hof Method</h3>
+                    <p>Powerful breathing technique to boost energy, strengthen immune system, and increase mental
+                        clarity.</p>
+                    <button class="practice-btn"
+                        onclick="window.location.href='breathing-timer.html?exercise=wimhof'">Practice Now</button>
+                </div>
+            </div>
+
+            <div class="breathing-card">
+                <img src="https://images.unsplash.com/photo-1552196563-55cd4e45efb3?w=800&h=400&fit=crop"
+                    alt="Alternate Nostril" class="breathing-image">
+                <div class="breathing-content">
+                    <h3>🎯 Alternate Nostril</h3>
+                    <p>Nadi Shodhana - Balance left and right brain hemispheres, reduce stress, and improve focus.</p>
+                    <button class="practice-btn"
+                        onclick="window.location.href='breathing-timer.html?exercise=alternate'">Practice Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ZenTrack Therapy Options - Choose your path to wellness">
+    <title>Therapies - ZenTrack</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #E8D5C4 0%, #C9A88A 50%, #B08968 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .therapy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .therapy-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .therapy-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #6B8E76, #52705F);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            z-index: 1;
+        }
+
+        .therapy-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .therapy-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+        }
+
+        .therapy-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #6B8E76 0%, #52705F 100%);
+        }
+
+        .therapy-content {
+            padding: 2rem;
+        }
+
+        .therapy-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .therapy-content h2 {
+            font-size: 1.8rem;
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+
+        .therapy-content p {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .therapy-btn {
+            background: linear-gradient(135deg, #6B8E76 0%, #52705F 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .therapy-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(107, 142, 118, 0.4);
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: #6B8E76;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .therapy-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
+
+        <div class="header">
+            <h1>🧘 Choose Your Therapy</h1>
+            <p>Select a therapy type to begin your wellness journey</p>
+        </div>
+
+        <div class="therapy-grid">
+            <!-- Yoga Therapy -->
+            <div class="therapy-card" onclick="window.location.href='therapies/yoga.html'">
+                <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&h=400&fit=crop"
+                    alt="Yoga Therapy" class="therapy-image">
+                <div class="therapy-content">
+                    <span class="therapy-icon">🧘‍♀️</span>
+                    <h2>Yoga Therapy</h2>
+                    <p>Practice ancient yoga asanas and breathing techniques to enhance your physical and mental
+                        well-being.</p>
+                    <button class="therapy-btn">Start Yoga</button>
+                </div>
+            </div>
+
+            <!-- Meditation -->
+            <div class="therapy-card" onclick="window.location.href='therapies/meditation.html'">
+                <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&h=400&fit=crop"
+                    alt="Meditation" class="therapy-image">
+                <div class="therapy-content">
+                    <span class="therapy-icon">🧘</span>
+                    <h2>Meditation</h2>
+                    <p>Guided meditation sessions to calm your mind, reduce stress, and improve focus and clarity.</p>
+                    <button class="therapy-btn">Start Meditation</button>
+                </div>
+            </div>
+
+            <!-- Audio Therapy -->
+            <div class="therapy-card" onclick="window.location.href='therapies/audio.html'">
+                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&h=400&fit=crop"
+                    alt="Audio Therapy" class="therapy-image">
+                <div class="therapy-content">
+                    <span class="therapy-icon">🎧</span>
+                    <h2>Audio Therapy</h2>
+                    <p>Listen to calming music, motivational podcasts, and audiobooks to relax and gain knowledge.</p>
+                    <button class="therapy-btn">Start Audio</button>
+                </div>
+            </div>
+
+            <!-- Breathing Exercises -->
+            <div class="therapy-card" onclick="window.location.href='therapies/breathing.html'">
+                <img src="https://images.unsplash.com/photo-1545389336-cf090694435e?w=800&h=400&fit=crop"
+                    alt="Breathing Exercises" class="therapy-image">
+                <div class="therapy-content">
+                    <span class="therapy-icon">💨</span>
+                    <h2>Breathing Exercises</h2>
+                    <p>Learn powerful breathing techniques like Pranayama to reduce anxiety and increase energy.</p>
+                    <button class="therapy-btn">Start Breathing</button>
+                </div>
+            </div>
+
+            <!-- Book Reading -->
+            <div class="therapy-card" onclick="window.location.href='therapies/books.html'">
+                <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&h=400&fit=crop"
+                    alt="Book Reading" class="therapy-image">
+                <div class="therapy-content">
+                    <span class="therapy-icon">📚</span>
+                    <h2>Book Reading</h2>
+                    <p>Discover curated books on mental wellness, self-improvement, and mindfulness to expand your
+                        knowledge.
+                    </p>
+                    <button class="therapy-btn">Start Reading</button>
+                </div>
+            </div>
+
+            <!-- Progressive Relaxation -->
+            <div class="therapy-card" onclick="window.location.href='therapies/relaxation.html'">
+                <img src="https://images.unsplash.com/photo-1447452001602-7090c7ab2db3?w=800&h=400&fit=crop"
+                    alt="Progressive Relaxation" class="therapy-image">
+                <div class="therapy-content">
+                    <span class="therapy-icon">😌</span>
+                    <h2>Progressive Relaxation</h2>
+                    <p>Systematic muscle relaxation techniques to release physical tension and mental stress.</p>
+                    <button class="therapy-btn">Start Relaxation</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

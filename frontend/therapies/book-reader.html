@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Reader - ZenTrack</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .book-reader {
+            background: #f5f5dc;
+            max-width: 900px;
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .book-header {
+            background: linear-gradient(135deg, #6B8E76 0%, #52705F 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .book-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            background: white;
+            color: #6B8E76;
+        }
+
+        .book-content {
+            display: flex;
+            min-height: 600px;
+        }
+
+        .page {
+            flex: 1;
+            padding: 3rem;
+            font-family: 'Merriweather', serif;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #2c3e50;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .page h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #6B8E76;
+        }
+
+        .page h3 {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            color: #52705F;
+        }
+
+        .page p {
+            margin-bottom: 1.5rem;
+            text-align: justify;
+        }
+
+        .page ul,
+        .page ol {
+            margin: 1rem 0 1.5rem 2rem;
+        }
+
+        .page li {
+            margin-bottom: 0.5rem;
+        }
+
+        .book-controls {
+            background: #e8e8d0;
+            padding: 1.5rem 2rem;
+            border-radius: 0 0 10px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #6B8E76 0%, #52705F 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(107, 142, 118, 0.4);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            font-weight: 600;
+            color: #6B8E76;
+            font-size: 1.1rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .book-content {
+                min-height: 500px;
+            }
+
+            .page {
+                padding: 2rem 1.5rem;
+                font-size: 1rem;
+            }
+
+            .book-title {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="book-reader">
+        <div class="book-header">
+            <div class="book-title" id="bookTitle">Loading...</div>
+            <a href="books.html" class="close-btn">✕ Close</a>
+        </div>
+
+        <div class="book-content" id="bookContent">
+            <!-- Pages will be loaded dynamically -->
+        </div>
+
+        <div class="book-controls">
+            <button class="nav-btn" id="prevBtn" onclick="previousPage()">← Previous</button>
+            <div class="page-info">
+                Page <span id="currentPage">1</span> of <span id="totalPages">6</span>
+            </div>
+            <button class="nav-btn" id="nextBtn" onclick="nextPage()">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let totalPages = 6;
+        let currentBook = 'mindfulness'; // default
+
+        // Get book ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookId = urlParams.get('book') || 'mindfulness';
+        currentBook = bookId;
+
+        // Book content database
+        const books = {
+            mindfulness: {
+                title: 'The Power of Mindfulness',
+                pages: [
+                    {
+                        content: `<h2>Introduction to Mindfulness</h2>
+                        <p>Welcome to your journey of mindfulness and self-discovery. In this book, we will explore the ancient practice of mindfulness and how it can transform your daily life.</p>
+                        <p>Mindfulness is the practice of being fully present in the moment, aware of where we are and what we're doing, without being overly reactive or overwhelmed by what's happening around us.</p>
+                        <h3>What You Will Learn:</h3>
+                        <ul>
+                            <li>Understanding the basics of mindfulness meditation</li>
+                            <li>Techniques for staying present in daily life</li>
+                            <li>Managing stress and anxiety through awareness</li>
+                            <li>Building a sustainable mindfulness practice</li>
+                            <li>Integrating mindfulness into your routine</li>
+                        </ul>
+                        <p>This book is designed to be a practical guide, offering exercises and insights that you can apply immediately to experience the benefits of mindfulness.</p>`
+                    },
+                    {
+                        content: `<h2>Chapter 1: The Foundations of Mindfulness</h2>
+                        <h3>What is Mindfulness?</h3>
+                        <p>Mindfulness is a mental state achieved by focusing one's awareness on the present moment, while calmly acknowledging and accepting one's feelings, thoughts, and bodily sensations.</p>
+                        <p>The practice has its roots in Buddhist meditation, but has been adapted for modern secular use in psychology and medicine. Research has shown that mindfulness can reduce stress, improve focus, and enhance overall well-being.</p>
+                        <h3>The Three Pillars of Mindfulness:</h3>
+                        <ol>
+                            <li><strong>Awareness:</strong> Paying attention to your thoughts, emotions, and physical sensations without judgment.</li>
+                            <li><strong>Acceptance:</strong> Acknowledging your experiences as they are, without trying to change or resist them.</li>
+                            <li><strong>Non-judgment:</strong> Observing your experiences without labeling them as good or bad.</li>
+                        </ol>
+                        <p>These three pillars work together to create a foundation for mindful living.</p>`
+                    },
+                    {
+                        content: `<h2>Chapter 2: Starting Your Practice</h2>
+                        <h3>Basic Breathing Meditation</h3>
+                        <p>The simplest way to begin practicing mindfulness is through breath awareness. Here's a step-by-step guide:</p>
+                        <ol>
+                            <li>Find a quiet, comfortable place to sit</li>
+                            <li>Close your eyes or soften your gaze</li>
+                            <li>Bring your attention to your breath</li>
+                            <li>Notice the sensation of breathing in and out</li>
+                            <li>When your mind wanders, gently bring it back to your breath</li>
+                        </ol>
+                        <p>Start with just 5 minutes a day. As you become more comfortable, gradually increase the duration. Remember, there's no "perfect" meditation - the practice itself is what matters.</p>
+                        <h3>Common Challenges:</h3>
+                        <p>It's normal for your mind to wander. You might feel restless, bored, or frustrated. These are all part of the learning process. Each time you notice your mind has wandered and bring it back, you're strengthening your mindfulness muscle.</p>`
+                    },
+                    {
+                        content: `<h2>Chapter 3: Mindfulness in Daily Life</h2>
+                        <h3>Bringing Awareness to Everyday Activities</h3>
+                        <p>Mindfulness isn't just about formal meditation. You can practice it throughout your day:</p>
+                        <ul>
+                            <li><strong>Mindful Eating:</strong> Pay attention to the taste, texture, and smell of your food. Eat slowly and savor each bite.</li>
+                            <li><strong>Mindful Walking:</strong> Notice the sensation of your feet touching the ground, the movement of your body, and your surroundings.</li>
+                            <li><strong>Mindful Listening:</strong> Give your full attention to others when they speak, without planning your response.</li>
+                            <li><strong>Mindful Working:</strong> Focus on one task at a time, bringing your full attention to what you're doing.</li>
+                        </ul>
+                        <p>By incorporating these practices into your routine, you'll find that mindfulness becomes a natural part of your life, rather than something separate you have to "do."</p>`
+                    },
+                    {
+                        content: `<h2>Chapter 4: Managing Stress and Emotions</h2>
+                        <h3>The Mindful Response to Stress</h3>
+                        <p>When we're stressed, our automatic reaction is often to fight, flee, or freeze. Mindfulness offers a different approach: pause, observe, and respond with awareness.</p>
+                        <h3>The STOP Technique:</h3>
+                        <ol>
+                            <li><strong>S - Stop:</strong> Pause whatever you're doing</li>
+                            <li><strong>T - Take a breath:</strong> Bring awareness to your breathing</li>
+                            <li><strong>O - Observe:</strong> Notice your thoughts, feelings, and bodily sensations</li>
+                            <li><strong>P - Proceed:</strong> Continue with greater awareness and intention</li>
+                        </ol>
+                        <p>This simple technique can be used anytime you feel overwhelmed or reactive. It creates a space between stimulus and response, allowing you to choose how to act rather than react automatically.</p>
+                        <p>Remember: You can't control what happens to you, but you can control how you respond to it.</p>`
+                    },
+                    {
+                        content: `<h2>Conclusion: Your Mindfulness Journey</h2>
+                        <h3>Building a Sustainable Practice</h3>
+                        <p>Mindfulness is not a destination but a journey. It's a lifelong practice that deepens and evolves over time. Here are some tips for maintaining your practice:</p>
+                        <ul>
+                            <li>Start small and be consistent - even 5 minutes daily is valuable</li>
+                            <li>Be patient and kind with yourself</li>
+                            <li>Find a community or meditation group for support</li>
+                            <li>Explore different techniques to find what works for you</li>
+                            <li>Remember that every moment is a new opportunity to be mindful</li>
+                        </ul>
+                        <h3>Final Thoughts</h3>
+                        <p>As you continue your mindfulness journey, remember that the goal is not to eliminate thoughts or achieve a particular state of mind. Rather, it's to develop a new relationship with your experiences - one characterized by awareness, acceptance, and compassion.</p>
+                        <p>May your practice bring you peace, clarity, and joy. Thank you for reading, and may you find moments of mindfulness in each day.</p>
+                        <p style="text-align: center; margin-top: 3rem; font-style: italic;">~ The End ~</p>`
+                    }
+                ]
+            },
+            habits: {
+                title: 'Building Better Habits',
+                pages: [
+                    {
+                        content: `<h2>Introduction: The Power of Tiny Changes</h2>
+                        <p>Welcome to your guide on building better habits. Small changes can lead to remarkable results when applied consistently over time.</p>
+                        <p>This book will teach you how to create good habits, break bad ones, and master the tiny behaviors that lead to remarkable results.</p>
+                        <h3>What You'll Learn:</h3>
+                        <ul>
+                            <li>The science behind habit formation</li>
+                            <li>How to make good habits inevitable and bad habits impossible</li>
+                            <li>The role of environment in shaping behavior</li>
+                            <li>Strategies for staying motivated</li>
+                            <li>How to recover from setbacks</li>
+                        </ul>
+                        <p>Remember: You don't rise to the level of your goals, you fall to the level of your systems.</p>`
+                    },
+                    {
+                        content: `<h2>Chapter 1: The Fundamentals of Habits</h2>
+                        <h3>Why Tiny Changes Make a Big Difference</h3>
+                        <p>Habits are the compound interest of self-improvement. The same way that money multiplies through compound interest, the effects of your habits multiply as you repeat them.</p>
+                        <p>If you can get 1% better each day for one year, you'll end up thirty-seven times better by the time you're done. Conversely, if you get 1% worse each day for one year, you'll decline nearly down to zero.</p>
+                        <h3>The Four Laws of Behavior Change:</h3>
+                        <ol>
+                            <li><strong>Make it Obvious:</strong> Increase awareness of your habits</li>
+                            <li><strong>Make it Attractive:</strong> Bundle habits with things you enjoy</li>
+                            <li><strong>Make it Easy:</strong> Reduce friction for good habits</li>
+                            <li><strong>Make it Satisfying:</strong> Give yourself immediate rewards</li>
+                        </ol>`
+                    },
+                    {
+                        content: `<h2>Chapter 2: Make It Obvious</h2>
+                        <h3>The Power of Environment Design</h3>
+                        <p>You don't have to be the victim of your environment. You can also be the architect of it. Environment design allows you to take back control and become the architect of your life.</p>
+                        <h3>Implementation Intentions:</h3>
+                        <p>Many people think they lack motivation when what they really lack is clarity. Use this formula:</p>
+                        <p><strong>"I will [BEHAVIOR] at [TIME] in [LOCATION]."</strong></p>
+                        <p>For example: "I will meditate for 10 minutes at 7 AM in my bedroom."</p>
+                        <h3>Habit Stacking:</h3>
+                        <p>After [CURRENT HABIT], I will [NEW HABIT].</p>
+                        <p>Example: "After I pour my morning coffee, I will meditate for 5 minutes."</p>`
+                    },
+                    {
+                        content: `<h2>Chapter 3: Make It Attractive</h2>
+                        <h3>The Role of Dopamine in Habits</h3>
+                        <p>The more attractive an opportunity is, the more likely it is to become habit-forming. Habits are a dopamine-driven feedback loop.</p>
+                        <h3>Temptation Bundling:</h3>
+                        <p>Pair an action you want to do with an action you need to do. For example:</p>
+                        <ul>
+                            <li>Only watch your favorite show while exercising</li>
+                            <li>Only get a pedicure while processing overdue emails</li>
+                            <li>Only listen to audiobooks while commuting</li>
+                        </ul>
+                        <h3>Join a Culture Where Your Desired Behavior is Normal:</h3>
+                        <p>We imitate the habits of three groups: the close (family and friends), the many (the tribe), and the powerful (those with status and prestige).</p>`
+                    },
+                    {
+                        content: `<h2>Chapter 4: Make It Easy</h2>
+                        <h3>The Law of Least Effort</h3>
+                        <p>Human behavior follows the Law of Least Effort. We will naturally gravitate toward the option that requires the least amount of work.</p>
+                        <h3>The Two-Minute Rule:</h3>
+                        <p>When you start a new habit, it should take less than two minutes to do. The idea is to make your habits as easy as possible to start.</p>
+                        <ul>
+                            <li>"Read before bed each night" becomes "Read one page"</li>
+                            <li>"Do thirty minutes of yoga" becomes "Take out my yoga mat"</li>
+                            <li>"Study for class" becomes "Open my notes"</li>
+                        </ul>
+                        <h3>Reduce Friction:</h3>
+                        <p>Decrease the number of steps between you and your good habits. Increase the number of steps between you and your bad habits.</p>`
+                    },
+                    {
+                        content: `<h2>Conclusion: The Secret to Results That Last</h2>
+                        <h3>The Plateau of Latent Potential</h3>
+                        <p>We often expect progress to be linear. We think we should make progress every day, but in reality, the results of our efforts are often delayed.</p>
+                        <p>This is one of the core reasons why it is so hard to build habits that last. People make a few small changes, fail to see a tangible result, and decide to stop.</p>
+                        <h3>Focus on Systems, Not Goals:</h3>
+                        <ul>
+                            <li>Goals are about the results you want to achieve</li>
+                            <li>Systems are about the processes that lead to those results</li>
+                        </ul>
+                        <p>You do not rise to the level of your goals. You fall to the level of your systems.</p>
+                        <p style="text-align: center; margin-top: 3rem; font-style: italic;">~ The End ~</p>`
+                    }
+                ]
+            },
+            meditation: {
+                title: 'Mindfulness Meditation Guide',
+                pages: [
+                    {
+                        content: `<h2>Introduction to Meditation</h2>
+                        <p>Meditation is a practice where an individual uses a technique to train attention and awareness, and achieve a mentally clear and emotionally calm and stable state.</p>
+                        <h3>Benefits of Meditation:</h3>
+                        <ul>
+                            <li>Reduces stress and anxiety</li>
+                            <li>Improves concentration and focus</li>
+                            <li>Enhances self-awareness</li>
+                            <li>Promotes emotional health</li>
+                            <li>Lengthens attention span</li>
+                            <li>May reduce age-related memory loss</li>
+                        </ul>
+                        <p>This guide will teach you practical meditation techniques that you can start using today.</p>`
+                    },
+                    {
+                        content: `<h2>Chapter 1: Breath Meditation</h2>
+                        <h3>The Foundation of Practice</h3>
+                        <p>Breath meditation is the most fundamental meditation practice. It's simple, accessible, and incredibly powerful.</p>
+                        <h3>How to Practice:</h3>
+                        <ol>
+                            <li>Sit comfortably with your back straight</li>
+                            <li>Close your eyes or lower your gaze</li>
+                            <li>Breathe naturally through your nose</li>
+                            <li>Focus your attention on the sensation of breathing</li>
+                            <li>When your mind wanders, gently return to the breath</li>
+                        </ol>
+                        <p>Practice for 10-20 minutes daily. The key is consistency, not duration.</p>`
+                    },
+                    {
+                        content: `<h2>Chapter 2: Body Scan Meditation</h2>
+                        <h3>Connecting Mind and Body</h3>
+                        <p>Body scan meditation involves paying attention to different parts of your body, from your toes to the top of your head.</p>
+                        <h3>Step-by-Step Guide:</h3>
+                        <ol>
+                            <li>Lie down or sit comfortably</li>
+                            <li>Close your eyes and take a few deep breaths</li>
+                            <li>Bring attention to your toes</li>
+                            <li>Slowly move your attention up through your body</li>
+                            <li>Notice any sensations without judgment</li>
+                            <li>Release tension as you go</li>
+                        </ol>
+                        <p>This practice is excellent for relaxation and sleep preparation.</p>`
+                    },
+                    {
+                        content: `<h2>Chapter 3: Loving-Kindness Meditation</h2>
+                        <h3>Cultivating Compassion</h3>
+                        <p>Loving-kindness meditation (Metta) involves directing well-wishes toward yourself and others.</p>
+                        <h3>The Practice:</h3>
+                        <p>Silently repeat these phrases:</p>
+                        <ul>
+                            <li>May I be happy</li>
+                            <li>May I be healthy</li>
+                            <li>May I be safe</li>
+                            <li>May I live with ease</li>
+                        </ul>
+                        <p>Then extend these wishes to:</p>
+                        <ol>
+                            <li>Someone you love</li>
+                            <li>A neutral person</li>
+                            <li>A difficult person</li>
+                            <li>All beings everywhere</li>
+                        </ol>`
+                    },
+                    {
+                        content: `<h2>Chapter 4: Walking Meditation</h2>
+                        <h3>Meditation in Motion</h3>
+                        <p>Walking meditation combines the benefits of meditation with gentle physical activity.</p>
+                        <h3>How to Practice:</h3>
+                        <ol>
+                            <li>Find a quiet path or space</li>
+                            <li>Walk slowly and deliberately</li>
+                            <li>Focus on the sensation of each step</li>
+                            <li>Notice the lifting, moving, and placing of each foot</li>
+                            <li>Coordinate breath with steps if desired</li>
+                        </ol>
+                        <p>This is perfect for those who find sitting meditation challenging.</p>`
+                    },
+                    {
+                        content: `<h2>Conclusion: Making Meditation a Habit</h2>
+                        <h3>Tips for Consistency:</h3>
+                        <ul>
+                            <li>Meditate at the same time each day</li>
+                            <li>Start with just 5 minutes</li>
+                            <li>Create a dedicated meditation space</li>
+                            <li>Use guided meditations when needed</li>
+                            <li>Be patient with yourself</li>
+                            <li>Track your practice in a journal</li>
+                        </ul>
+                        <h3>Remember:</h3>
+                        <p>Meditation is a practice, not a performance. There's no such thing as a "bad" meditation. Every time you sit down to meditate, you're training your mind and benefiting your well-being.</p>
+                        <p style="text-align: center; margin-top: 3rem; font-style: italic;">~ The End ~</p>`
+                    }
+                ]
+            },
+            mentalhealth: {
+                title: 'Mental Wellness Guide',
+                pages: [
+                    {
+                        content: `<h2>Understanding Mental Wellness</h2>
+                        <p>Mental wellness is more than the absence of mental illness. It's about thriving, not just surviving.</p>
+                        <h3>Key Components of Mental Wellness:</h3>
+                        <ul>
+                            <li>Emotional regulation</li>
+                            <li>Positive relationships</li>
+                            <li>Sense of purpose</li>
+                            <li>Self-acceptance</li>
+                            <li>Personal growth</li>
+                            <li>Autonomy and independence</li>
+                        </ul>
+                        <p>This guide provides practical strategies for maintaining and improving your mental health.</p>`
+                    },
+                    {
+                        content: `<h2>Chapter 1: Managing Stress</h2>
+                        <h3>Understanding Stress</h3>
+                        <p>Stress is your body's response to challenges or demands. While some stress is normal and even helpful, chronic stress can harm your health.</p>
+                        <h3>Stress Management Techniques:</h3>
+                        <ol>
+                            <li><strong>Deep Breathing:</strong> Practice 4-7-8 breathing</li>
+                            <li><strong>Physical Activity:</strong> Exercise for 30 minutes daily</li>
+                            <li><strong>Time Management:</strong> Prioritize and delegate tasks</li>
+                            <li><strong>Social Support:</strong> Connect with friends and family</li>
+                            <li><strong>Healthy Boundaries:</strong> Learn to say no</li>
+                        </ol>`
+                    },
+                    {
+                        content: `<h2>Chapter 2: Overcoming Anxiety</h2>
+                        <h3>What is Anxiety?</h3>
+                        <p>Anxiety is a normal emotion, but when it becomes excessive or interferes with daily life, it may be an anxiety disorder.</p>
+                        <h3>Coping Strategies:</h3>
+                        <ul>
+                            <li><strong>Challenge Negative Thoughts:</strong> Question anxious thinking patterns</li>
+                            <li><strong>Grounding Techniques:</strong> Use the 5-4-3-2-1 method</li>
+                            <li><strong>Progressive Muscle Relaxation:</strong> Tense and release muscle groups</li>
+                            <li><strong>Limit Caffeine:</strong> Reduce stimulant intake</li>
+                            <li><strong>Seek Professional Help:</strong> Consider therapy if needed</li>
+                        </ul>`
+                    },
+                    {
+                        content: `<h2>Chapter 3: Building Resilience</h2>
+                        <h3>What is Resilience?</h3>
+                        <p>Resilience is the ability to bounce back from adversity, trauma, or stress. It's not about avoiding difficulties, but learning to cope with them effectively.</p>
+                        <h3>How to Build Resilience:</h3>
+                        <ol>
+                            <li>Develop strong relationships</li>
+                            <li>Accept that change is part of life</li>
+                            <li>Take decisive actions</li>
+                            <li>Look for opportunities for self-discovery</li>
+                            <li>Nurture a positive view of yourself</li>
+                            <li>Keep things in perspective</li>
+                            <li>Maintain a hopeful outlook</li>
+                        </ol>`
+                    },
+                    {
+                        content: `<h2>Chapter 4: Self-Care Practices</h2>
+                        <h3>The Importance of Self-Care</h3>
+                        <p>Self-care isn't selfish—it's essential. You can't pour from an empty cup.</p>
+                        <h3>Daily Self-Care Checklist:</h3>
+                        <ul>
+                            <li><strong>Physical:</strong> Exercise, healthy eating, adequate sleep</li>
+                            <li><strong>Emotional:</strong> Journal, express feelings, practice gratitude</li>
+                            <li><strong>Social:</strong> Connect with loved ones, join communities</li>
+                            <li><strong>Spiritual:</strong> Meditate, spend time in nature, practice mindfulness</li>
+                            <li><strong>Mental:</strong> Learn new things, read, engage in hobbies</li>
+                        </ul>`
+                    },
+                    {
+                        content: `<h2>Conclusion: Your Mental Wellness Journey</h2>
+                        <h3>Creating Your Wellness Plan:</h3>
+                        <ol>
+                            <li>Assess your current mental health</li>
+                            <li>Identify your stressors and triggers</li>
+                            <li>Choose strategies that work for you</li>
+                            <li>Set realistic goals</li>
+                            <li>Track your progress</li>
+                            <li>Adjust as needed</li>
+                        </ol>
+                        <h3>Remember:</h3>
+                        <p>Mental wellness is a journey, not a destination. Be patient with yourself, celebrate small victories, and don't hesitate to seek professional help when needed.</p>
+                        <p style="text-align: center; margin-top: 3rem; font-style: italic;">~ The End ~</p>`
+                    }
+                ]
+            },
+            innerpeace: {
+                title: 'Finding Inner Peace',
+                pages: [
+                    {
+                        content: `<h2>The Journey to Inner Peace</h2>
+                        <p>Inner peace is a state of mental and spiritual calmness, with enough knowledge and understanding to keep oneself strong in the face of discord or stress.</p>
+                        <h3>What You'll Discover:</h3>
+                        <ul>
+                            <li>Understanding what inner peace truly means</li>
+                            <li>Letting go of what you can't control</li>
+                            <li>Practicing forgiveness and compassion</li>
+                            <li>Living in alignment with your values</li>
+                            <li>Finding stillness in a chaotic world</li>
+                        </ul>
+                        <p>This book will guide you on a transformative journey toward lasting inner peace.</p>`
+                    },
+                    {
+                        content: `<h2>Chapter 1: Letting Go</h2>
+                        <h3>The Art of Surrender</h3>
+                        <p>Inner peace begins when you choose not to allow another person or event to control your emotions.</p>
+                        <h3>What to Let Go Of:</h3>
+                        <ul>
+                            <li><strong>The Past:</strong> You can't change what happened</li>
+                            <li><strong>Grudges:</strong> Forgiveness frees you</li>
+                            <li><strong>Perfectionism:</strong> Done is better than perfect</li>
+                            <li><strong>Others' Opinions:</strong> You can't please everyone</li>
+                            <li><strong>Control:</strong> Accept what you cannot change</li>
+                        </ul>
+                        <p>Letting go doesn't mean giving up—it means accepting what is.</p>`
+                    },
+                    {
+                        content: `<h2>Chapter 2: Living in the Present</h2>
+                        <h3>The Power of Now</h3>
+                        <p>The present moment is all we ever have. The past is gone, the future hasn't arrived—only now is real.</p>
+                        <h3>Practices for Presence:</h3>
+                        <ol>
+                            <li>Focus on your breath</li>
+                            <li>Engage your senses fully</li>
+                            <li>Practice single-tasking</li>
+                            <li>Take mindful pauses throughout the day</li>
+                            <li>Notice when your mind wanders to past or future</li>
+                        </ol>
+                        <p>When you're fully present, worry and anxiety naturally diminish.</p>`
+                    },
+                    {
+                        content: `<h2>Chapter 3: Cultivating Gratitude</h2>
+                        <h3>The Gratitude Practice</h3>
+                        <p>Gratitude shifts your focus from what's missing to what's present, from problems to blessings.</p>
+                        <h3>Daily Gratitude Exercise:</h3>
+                        <ol>
+                            <li>Each morning, write three things you're grateful for</li>
+                            <li>Be specific and detailed</li>
+                            <li>Include small things (a warm cup of tea, a smile from a stranger)</li>
+                            <li>Feel the emotion of gratitude as you write</li>
+                        </ol>
+                        <p>Research shows that gratitude practice significantly increases happiness and life satisfaction.</p>`
+                    },
+                    {
+                        content: `<h2>Chapter 4: Simplifying Your Life</h2>
+                        <h3>Less is More</h3>
+                        <p>Inner peace often comes from simplification—removing the excess to make room for what truly matters.</p>
+                        <h3>Areas to Simplify:</h3>
+                        <ul>
+                            <li><strong>Physical Space:</strong> Declutter your environment</li>
+                            <li><strong>Schedule:</strong> Say no to non-essential commitments</li>
+                            <li><strong>Relationships:</strong> Focus on quality over quantity</li>
+                            <li><strong>Digital Life:</strong> Reduce screen time and notifications</li>
+                            <li><strong>Thoughts:</strong> Let go of mental clutter</li>
+                        </ul>
+                        <p>Simplicity creates space for peace to flourish.</p>`
+                    },
+                    {
+                        content: `<h2>Conclusion: Maintaining Inner Peace</h2>
+                        <h3>Daily Practices for Peace:</h3>
+                        <ul>
+                            <li>Morning meditation or quiet reflection</li>
+                            <li>Gratitude journaling</li>
+                            <li>Mindful movement (yoga, walking)</li>
+                            <li>Limiting news and social media</li>
+                            <li>Spending time in nature</li>
+                            <li>Evening review and release</li>
+                        </ul>
+                        <h3>Final Wisdom:</h3>
+                        <p>Inner peace is not about having a perfect life. It's about finding peace within yourself regardless of external circumstances. It's a choice you make, moment by moment, day by day.</p>
+                        <p style="text-align: center; margin-top: 3rem; font-style: italic;">~ The End ~</p>`
+                    }
+                ]
+            },
+            dailypractice: {
+                title: 'Daily Mindfulness Practice',
+                pages: [
+                    {
+                        content: `<h2>Mindfulness in Everyday Life</h2>
+                        <p>Mindfulness doesn't require hours of meditation. It's about bringing awareness to your daily activities.</p>
+                        <h3>What This Book Covers:</h3>
+                        <ul>
+                            <li>Morning mindfulness routines</li>
+                            <li>Mindful eating practices</li>
+                            <li>Mindfulness at work</li>
+                            <li>Evening wind-down rituals</li>
+                            <li>Weekend mindfulness activities</li>
+                        </ul>
+                        <p>Learn to transform ordinary moments into opportunities for presence and peace.</p>`
+                    },
+                    {
+                        content: `<h2>Chapter 1: Mindful Morning Routine</h2>
+                        <h3>Starting Your Day with Intention</h3>
+                        <p>How you start your morning sets the tone for your entire day.</p>
+                        <h3>5-Minute Morning Practice:</h3>
+                        <ol>
+                            <li><strong>Wake Mindfully:</strong> Take 3 deep breaths before getting up</li>
+                            <li><strong>Set an Intention:</strong> Choose one word for your day</li>
+                            <li><strong>Mindful Shower:</strong> Feel the water, notice the sensations</li>
+                            <li><strong>Conscious Breakfast:</strong> Eat without distractions</li>
+                            <li><strong>Gratitude Moment:</strong> Name three things you're grateful for</li>
+                        </ol>
+                        <p>This simple routine can transform your mornings and your life.</p>`
+                    },
+                    {
+                        content: `<h2>Chapter 2: Mindful Eating</h2>
+                        <h3>The Art of Conscious Consumption</h3>
+                        <p>Mindful eating means paying full attention to the experience of eating and drinking.</p>
+                        <h3>How to Practice:</h3>
+                        <ul>
+                            <li>Eat without screens or distractions</li>
+                            <li>Notice colors, smells, and textures</li>
+                            <li>Chew slowly and thoroughly</li>
+                            <li>Put your utensil down between bites</li>
+                            <li>Notice when you're full</li>
+                            <li>Express gratitude for your food</li>
+                        </ul>
+                        <p>Mindful eating can improve digestion, help with weight management, and increase enjoyment of food.</p>`
+                    },
+                    {
+                        content: `<h2>Chapter 3: Mindfulness at Work</h2>
+                        <h3>Staying Present in Professional Life</h3>
+                        <p>Work can be stressful, but mindfulness can help you stay calm and focused.</p>
+                        <h3>Workplace Mindfulness Tips:</h3>
+                        <ol>
+                            <li><strong>Mindful Transitions:</strong> Take 3 breaths between tasks</li>
+                            <li><strong>Single-Tasking:</strong> Focus on one thing at a time</li>
+                            <li><strong>Mindful Meetings:</strong> Listen fully without planning responses</li>
+                            <li><strong>Desk Meditation:</strong> 2-minute breathing breaks</li>
+                            <li><strong>Mindful Communication:</strong> Pause before responding to emails</li>
+                        </ol>`
+                    },
+                    {
+                        content: `<h2>Chapter 4: Evening Wind-Down</h2>
+                        <h3>Preparing for Restful Sleep</h3>
+                        <p>A mindful evening routine helps you release the day and prepare for quality sleep.</p>
+                        <h3>Evening Ritual:</h3>
+                        <ul>
+                            <li><strong>Digital Sunset:</strong> No screens 1 hour before bed</li>
+                            <li><strong>Gentle Movement:</strong> Light stretching or yoga</li>
+                            <li><strong>Reflection:</strong> Journal about your day</li>
+                            <li><strong>Gratitude:</strong> List 3 good things from today</li>
+                            <li><strong>Body Scan:</strong> Progressive relaxation in bed</li>
+                        </ul>
+                        <p>This routine signals to your body and mind that it's time to rest.</p>`
+                    },
+                    {
+                        content: `<h2>Conclusion: Making Mindfulness a Lifestyle</h2>
+                        <h3>Integration Tips:</h3>
+                        <ul>
+                            <li>Start small—pick one practice to begin with</li>
+                            <li>Use reminders (phone alarms, sticky notes)</li>
+                            <li>Link mindfulness to existing habits</li>
+                            <li>Be patient with yourself</li>
+                            <li>Celebrate small wins</li>
+                            <li>Find an accountability partner</li>
+                        </ul>
+                        <h3>Remember:</h3>
+                        <p>Mindfulness is not about being perfect. It's about being present. Every moment is a new opportunity to begin again.</p>
+                        <p style="text-align: center; margin-top: 3rem; font-style: italic;">~ The End ~</p>`
+                    }
+                ]
+            }
+        };
+
+        // Load book content
+        function loadBook() {
+            const book = books[currentBook];
+            if (!book) {
+                console.error('Book not found:', currentBook);
+                return;
+            }
+
+            document.getElementById('bookTitle').textContent = book.title;
+            totalPages = book.pages.length;
+            document.getElementById('totalPages').textContent = totalPages;
+
+            const contentDiv = document.getElementById('bookContent');
+            contentDiv.innerHTML = '';
+
+            book.pages.forEach((page, index) => {
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'page';
+                if (index === 0) pageDiv.classList.add('active');
+                pageDiv.setAttribute('data-page', index + 1);
+                pageDiv.innerHTML = page.content;
+                contentDiv.appendChild(pageDiv);
+            });
+        }
+
+        function showPage(pageNum) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            const page = document.querySelector(`[data-page="${pageNum}"]`);
+            if (page) {
+                page.classList.add('active');
+            }
+
+            document.getElementById('currentPage').textContent = pageNum;
+            document.getElementById('prevBtn').disabled = pageNum === 1;
+            document.getElementById('nextBtn').disabled = pageNum === totalPages;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                showPage(currentPage);
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                showPage(currentPage);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextPage();
+            if (e.key === 'ArrowLeft') previousPage();
+        });
+
+        // Initialize
+        loadBook();
+        showPage(1);
+    </script>
+</body>
+
+</html>

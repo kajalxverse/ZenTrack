@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenTrack - Login</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./css/main.css">
+
+    <style>
+        :root {
+            --zen-green: #6B8E76;
+            --zen-green-dark: #52705F;
+            --zen-beige: #e8d5c4;
+            --zen-brown: #b08968;
+            --text-dark: #292524;
+            --text-gray: #57534e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background-color: var(--zen-beige);
+            overflow-x: hidden;
+        }
+
+        .main-wrapper {
+            display: flex;
+            min-height: 100vh;
+            width: 100vw;
+        }
+
+        /* Visual Side (Desktop Only) */
+        .visual-side {
+            flex: 1.1;
+            background: linear-gradient(135deg, rgba(107, 142, 118, 0.9), rgba(176, 137, 104, 0.8)),
+                url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=2000');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            color: white;
+            position: relative;
+        }
+
+        .visual-side::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            opacity: 0.3;
+        }
+
+        .visual-content {
+            z-index: 10;
+            max-width: 600px;
+        }
+
+        .visual-content h2 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 25px;
+            line-height: 1.1;
+            letter-spacing: -2px;
+        }
+
+        .visual-content p {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 20px;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: 600;
+        }
+
+        /* Form Side */
+        .form-side {
+            flex: 0.9;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 80px;
+            position: relative;
+            background-image: radial-gradient(var(--zen-brown) 0.5px, transparent 0.5px);
+            background-size: 40px 40px;
+            background-repeat: repeat;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 440px;
+            margin: 0 auto;
+        }
+
+        .brand-section {
+            margin-bottom: 48px;
+            display: inline-block;
+        }
+
+        .brand-logo {
+            font-size: 50px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .brand-name {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -1.5px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: #f5f5f4;
+            padding: 6px;
+            border-radius: 14px;
+            margin-bottom: 35px;
+            border: 1px solid #e7e5e4;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            font-weight: 700;
+            color: var(--text-gray);
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: var(--zen-green);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 18px;
+            border: 2px solid #e7e5e4;
+            border-radius: 14px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--zen-green);
+            box-shadow: 0 0 0 5px rgba(107, 142, 118, 0.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: var(--zen-green);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: 17px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 10px 25px rgba(107, 142, 118, 0.3);
+        }
+
+        .submit-btn:hover {
+            background: var(--zen-green-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(107, 142, 118, 0.4);
+        }
+
+        .demo-chip {
+            background: #fafaf9;
+            border: 1px dashed var(--zen-brown);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .demo-chip:hover {
+            border-color: var(--zen-green);
+            background: #fdfcfb;
+        }
+
+        .demo-creds code {
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .alert-toast {
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 24px;
+            display: none;
+            animation: slideUp 0.3s ease;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .loader {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1100px) {
+            .form-side {
+                padding: 60px;
+            }
+
+            .visual-side {
+                padding: 40px;
+            }
+
+            .visual-content h2 {
+                font-size: 2.8rem;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .visual-side {
+                display: none;
+            }
+
+            .form-side {
+                flex: 1;
+                padding: 40px 20px;
+                background-color: var(--zen-beige);
+            }
+
+            .form-container {
+                background: #fff;
+                padding: 40px 30px;
+                border-radius: 24px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-wrapper">
+        <!-- Visual Content (Desktop) -->
+        <div class="visual-side">
+            <div class="visual-content">
+                <h2>Designed for your mind.</h2>
+                <p>Join thousands of ZenTrack users who found their calm. Track, analyze, and master your stress journey
+                    with AI.</p>
+                <div class="feature-grid">
+                    <div class="feature-item">🌿 AI Assessment</div>
+                    <div class="feature-item">🎧 Audio Therapy</div>
+                    <div class="feature-item">📊 Trend Insights</div>
+                    <div class="feature-item">🤖 Support Chatbot</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Authentication Form Side -->
+        <div class="form-side">
+            <div class="form-container">
+                <a href="landing.html" style="text-decoration: none;" class="brand-section">
+                    <span class="brand-logo">🧘‍♀️</span>
+                    <h1 class="brand-name">ZenTrack</h1>
+                </a>
+
+                <div class="auth-tabs">
+                    <button id="tab-login" class="tab-btn active" onclick="useForm('login')">Login</button>
+                    <button id="tab-reg" class="tab-btn" onclick="useForm('reg')">Register</button>
+                </div>
+
+                <div id="toast" class="alert-toast"></div>
+
+                <!-- Login Portion -->
+                <div id="login-form">
+                    <div class="demo-chip" onclick="fillTest()">
+                        <div
+                            style="font-size: 10px; font-weight: 800; color: var(--zen-brown); margin-bottom: 5px; text-transform: uppercase;">
+                            Direct Access</div>
+                        <div class="demo-creds">Admin Creds: <code>demo@zentrack.com</code> / <code>demo123</code></div>
+                    </div>
+
+                    <form onsubmit="handleAuth(event, 'login')">
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" id="log-email" class="form-input" placeholder="Enter your email"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" id="log-pass" class="form-input" placeholder="••••••••" required>
+                        </div>
+                        <button type="submit" class="submit-btn" id="btn-login">
+                            <span class="txt">Begin Session</span>
+                            <div class="loader" id="ldr-login"></div>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Register Portion -->
+                <div id="register-form" style="display: none;">
+                    <form onsubmit="handleAuth(event, 'register')">
+                        <div class="form-group">
+                            <label class="form-label">Identity Name</label>
+                            <input type="text" id="reg-name" class="form-input" placeholder="Full Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Hub</label>
+                            <input type="email" id="reg-email" class="form-input" placeholder="email@zentrack.com"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Set Keypass</label>
+                            <input type="password" id="reg-pass" class="form-input" placeholder="Min. 6 chars" required
+                                minlength="6">
+                        </div>
+                        <button type="submit" class="submit-btn" id="btn-reg">
+                            <span class="txt">Create Profile</span>
+                            <div class="loader" id="ldr-reg"></div>
+                        </button>
+                    </form>
+                </div>
+
+                <div style="text-align: center; margin-top: 40px;">
+                    <a href="landing.html"
+                        style="color: var(--text-gray); font-size: 14px; font-weight: 600; text-decoration: none;">← Go
+                        back to Landing</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="./js/config.js"></script>
+    <script src="./js/api.js"></script>
+    <script>
+        // Refresh Fix
+        window.addEventListener('load', () => {
+            const params = new URLSearchParams(window.location.search);
+            if (isLoggedIn() && params.get('session') !== 'expired') {
+                window.location.href = 'dashboard.html';
+            }
+        });
+
+        function useForm(target) {
+            const login = document.getElementById('login-form');
+            const reg = document.getElementById('register-form');
+            const toast = document.getElementById('toast');
+
+            toast.style.display = 'none';
+
+            if (target === 'login') {
+                login.style.display = 'block';
+                reg.style.display = 'none';
+                document.getElementById('tab-login').classList.add('active');
+                document.getElementById('tab-reg').classList.remove('active');
+            } else {
+                login.style.display = 'none';
+                reg.style.display = 'block';
+                document.getElementById('tab-login').classList.remove('active');
+                document.getElementById('tab-reg').classList.add('active');
+            }
+        }
+
+        function fillTest() {
+            document.getElementById('log-email').value = 'demo@zentrack.com';
+            document.getElementById('log-pass').value = 'demo123';
+        }
+
+        async function handleAuth(e, type) {
+            e.preventDefault();
+            const toast = document.getElementById('toast');
+            const loader = document.getElementById(type === 'login' ? 'ldr-login' : 'ldr-reg');
+            const txt = document.querySelector(`#${type === 'login' ? 'btn-login' : 'btn-reg'} .txt`);
+
+            toast.style.display = 'none';
+            loader.style.display = 'block';
+            txt.style.display = 'none';
+
+            try {
+                let result;
+                if (type === 'login') {
+                    result = await window.login(document.getElementById('log-email').value, document.getElementById('log-pass').value);
+                } else {
+                    result = await window.register(document.getElementById('reg-name').value, document.getElementById('reg-email').value, document.getElementById('reg-pass').value);
+                }
+
+                if (result.success) {
+                    toast.textContent = "Identity Verified! Entering Dashboard...";
+                    toast.className = "alert-toast alert-success";
+                    toast.style.display = "block";
+                    setTimeout(() => window.location.href = 'dashboard.html', 1000);
+                } else {
+                    toast.textContent = result.message || "Failed. Check your details.";
+                    toast.className = "alert-toast alert-error";
+                    toast.style.display = "block";
+                    loader.style.display = "none";
+                    txt.style.display = "block";
+                }
+            } catch (err) {
+                toast.textContent = "Server connection lost. Is the project live?";
+                toast.className = "alert-toast alert-error";
+                toast.style.display = "block";
+                loader.style.display = "none";
+                txt.style.display = "block";
+            }
+        }
+    </script>
+</body>
+
+</html>

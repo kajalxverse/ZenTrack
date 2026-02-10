@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenTrack - Cache Cleared</title>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #E8D5C4 0%, #C9A88A 50%, #B08968 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 600px;
+            background: white;
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        h1 {
+            color: #1F2937;
+            margin-bottom: 1rem;
+        }
+
+        .emoji {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+
+        button {
+            background: linear-gradient(135deg, #6B8E76 0%, #52705F 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(107, 142, 118, 0.3);
+        }
+
+        .info {
+            background: #DBEAFE;
+            border-left: 4px solid #3B82F6;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+
+        code {
+            background: #F3F4F6;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #EF4444;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="emoji">🔄</div>
+        <h1>Clear Cache & Reload</h1>
+        <p style="color: #6B7280; margin-bottom: 2rem;">
+            Click the button below to clear cache and reload the login page with the latest fixes.
+        </p>
+
+        <div class="info">
+            <strong>⚠️ Important:</strong><br>
+            The browser is caching old JavaScript files. This will force a fresh reload.
+        </div>
+
+        <button onclick="clearAndReload()">🚀 Clear Cache & Go to Login</button>
+        <button onclick="goToTest()">🧪 Go to API Test Page</button>
+
+        <div class="info" style="margin-top: 2rem;">
+            <strong>Manual Steps (if button doesn't work):</strong><br>
+            1. Press <code>Ctrl+Shift+Delete</code><br>
+            2. Select "Cached images and files"<br>
+            3. Click "Clear data"<br>
+            4. Then go to: <code>http://localhost:5000/login.html</code>
+        </div>
+    </div>
+
+    <script>
+        function clearAndReload() {
+            // Clear localStorage
+            localStorage.clear();
+            sessionStorage.clear();
+
+            // Add timestamp to force reload
+            const timestamp = new Date().getTime();
+            window.location.href = `login.html?v=${timestamp}`;
+        }
+
+        function goToTest() {
+            const timestamp = new Date().getTime();
+            window.location.href = `api-test.html?v=${timestamp}`;
+        }
+
+        // Auto-redirect after 3 seconds
+        let countdown = 3;
+        const countdownEl = document.createElement('p');
+        countdownEl.style.color = '#6B7280';
+        countdownEl.style.marginTop = '2rem';
+        document.querySelector('.container').appendChild(countdownEl);
+
+        const interval = setInterval(() => {
+            countdownEl.textContent = `Auto-redirecting in ${countdown} seconds...`;
+            countdown--;
+            if (countdown < 0) {
+                clearInterval(interval);
+                clearAndReload();
+            }
+        }, 1000);
+    </script>
+</body>
+
+</html>

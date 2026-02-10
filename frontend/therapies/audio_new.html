@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Therapy - ZenTrack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #121212;
+            color: white;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(0, 0, 0, 0.95);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1DB954 0%, #1ed760 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #b3b3b3;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #1DB954;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #1DB954 0%, #1ed760 100%);
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+        }
+
+        .hero .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-subtitle {
+            color: #b3b3b3;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .audio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .audio-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .audio-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 24px rgba(29, 185, 84, 0.2);
+        }
+
+        .audio-info {
+            margin-bottom: 1rem;
+        }
+
+        .audio-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #1DB954;
+        }
+
+        .audio-info p {
+            color: #b3b3b3;
+            font-size: 0.9rem;
+        }
+
+        audio {
+            width: 100%;
+            margin-top: 1rem;
+            border-radius: 8px;
+        }
+
+        audio::-webkit-media-controls-panel {
+            background-color: rgba(29, 185, 84, 0.2);
+        }
+
+        .back-btn {
+            background: rgba(29, 185, 84, 0.2);
+            color: #1DB954;
+            border: 2px solid #1DB954;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn:hover {
+            background: #1DB954;
+            color: white;
+        }
+
+        .external-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #1DB954;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .external-link:hover {
+            background: #1ed760;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .audio-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">🎧 ZenTrack Audio</div>
+            <ul class="nav-links">
+                <li><a href="../therapies.html">HOME</a></li>
+                <li><a href="#music">MUSIC</a></li>
+                <li><a href="#nature">NATURE SOUNDS</a></li>
+                <li><a href="#meditation">MEDITATION</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>🎵 Welcome to Audio Therapy</h1>
+        <p class="subtitle">Listen to calming music, nature sounds, and guided meditations to reduce stress and find
+            inner peace.</p>
+    </div>
+
+    <div class="container">
+        <a href="../therapies.html" class="back-btn">← Back to Therapies</a>
+
+        <section id="music">
+            <h2 class="section-title">🎶 Relaxing Music</h2>
+            <p class="section-subtitle">Calming melodies to help you relax and unwind</p>
+
+            <div class="audio-grid">
+                <div class="audio-card">
+                    <div class="audio-info">
+                        <h3>🎹 Peaceful Piano</h3>
+                        <p>Soft piano melodies for deep relaxation</p>
+                    </div>
+                    <audio controls>
+                        <source src="https://cdn.pixabay.com/audio/2023/02/28/audio_c2f6c3f3f8.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
+                <div class="audio-card">
+                    <div class="audio-info">
+                        <h3>🎸 Gentle Guitar</h3>
+                        <p>Soothing acoustic guitar for mindfulness</p>
+                    </div>
+                    <audio controls>
+                        <source src="https://cdn.pixabay.com/audio/2022/10/26/audio_24c330c1e0.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
+                <div class="audio-card">
+                    <div class="audio-info">
+                        <h3>🎻 Ambient Strings</h3>
+                        <p>Peaceful string instruments for calm</p>
+                    </div>
+                    <audio controls>
+                        <source src="https://cdn.pixabay.com/audio/2023/10/03/audio_c8dbda00e3.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
+                <div class="audio-card">
+                    <div class="audio-info">
+                        <h3>🎼 Meditation Music</h3>
+                        <p>Tranquil sounds for meditation practice</p>
+                    </div>
+                    <audio controls>
+                        <source src="https://cdn.pixabay.com/audio/2022/03/23/audio_13c0f2d3e2.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+        </section>
+
+        <section id="nature" style="margin-top: 4rem;">
+            <h2 class="section-title">🌿 Nature Sounds</h2>
+            <p class="section-subtitle">Natural ambience for stress relief and better sleep</p>
+
+            <div class="audio-grid">
+                <div class="audio-card">
+                    <div class="audio-info">
+                        <h3>🌊 Ocean Waves</h3>
+                        <p>Peaceful ocean sounds for deep relaxation</p>
+                    </div>
+                    <audio controls>
+                        <source src="https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
+                <div class="audio-card">
+                    <div class="audio-info">
+                        <h3>🌧️ Rain Sounds</h3>
+                        <p>Gentle rain for stress relief and sleep</p>
+                    </div>
+                    <audio controls>
+                        <source src="https://cdn.pixabay.com/audio/2022/03/10/audio_4deafc7eb1.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
+                <div class="audio-card">
+                    <div class="audio-info">
+                        <h3>🌲 Forest Ambience</h3>
+                        <p>Nature sounds from peaceful forest</p>
+                    </div>
+                    <audio controls>
+                        <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_c610232532.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
+                <div class="audio-card">
+                    <div class="audio-info">
+                        <h3>🐦 Birds Chirping</h3>
+                        <p>Morning birds for peaceful awakening</p>
+                    </div>
+                    <audio controls>
+                        <source src="https://cdn.pixabay.com/audio/2022/03/09/audio_c610232532.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+        </section>
+
+        <section id="meditation" style="margin-top: 4rem;">
+            <h2 class="section-title">🧘 Guided Meditation</h2>
+            <p class="section-subtitle">Meditation tracks for mindfulness and inner peace</p>
+
+            <div class="audio-grid">
+                <div class="audio-card">
+                    <div class="audio-info">
+                        <h3>🕉️ Deep Relaxation</h3>
+                        <p>Guided meditation for stress relief</p>
+                    </div>
+                    <audio controls>
+                        <source src="https://cdn.pixabay.com/audio/2023/06/12/audio_a3f5f3e3e8.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
+                <div class="audio-card">
+                    <div class="audio-info">
+                        <h3>☮️ Mindfulness Practice</h3>
+                        <p>Focus and awareness meditation</p>
+                    </div>
+                    <audio controls>
+                        <source src="https://cdn.pixabay.com/audio/2022/11/22/audio_e2f3f3e3e8.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
+                <div class="audio-card">
+                    <div class="audio-info">
+                        <h3>🌟 Chakra Healing</h3>
+                        <p>Energy balancing meditation music</p>
+                    </div>
+                    <audio controls>
+                        <source src="https://cdn.pixabay.com/audio/2023/01/10/audio_b3f5f3e3e8.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
+                <div class="audio-card">
+                    <div class="audio-info">
+                        <h3>💤 Sleep Meditation</h3>
+                        <p>Calming sounds for better sleep</p>
+                    </div>
+                    <audio controls>
+                        <source src="https://cdn.pixabay.com/audio/2022/08/02/audio_d3f5f3e3e8.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+
+            <a href="https://pixabay.com/music/search/meditation/" target="_blank" class="external-link">
+                🎵 Explore More Free Audio →
+            </a>
+        </section>
+    </div>
+</body>
+
+</html>

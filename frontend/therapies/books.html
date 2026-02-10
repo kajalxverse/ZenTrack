@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Reading - ZenTrack</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #6B8E76 0%, #52705F 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: #6B8E76;
+        }
+
+        .hero {
+            text-align: center;
+            color: white;
+            padding: 3rem 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .book-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .book-cover {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .book-content {
+            padding: 1.5rem;
+        }
+
+        .book-content h3 {
+            color: #1e293b;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .book-author {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .book-content p {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .book-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            background: rgba(107, 142, 118, 0.1);
+            color: #6B8E76;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .read-btn {
+            background: linear-gradient(135deg, #6B8E76 0%, #52705F 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .read-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(107, 142, 118, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="../therapies.html" class="back-btn">← Back to Therapies</a>
+
+        <div class="hero">
+            <h1>📚 Mental Wellness Books</h1>
+            <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto;">Curated collection of books on mindfulness,
+                mental health, and personal growth</p>
+        </div>
+
+        <div class="books-grid">
+            <div class="book-card" onclick="window.location.href='book-reader.html'">
+                <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=600&h=700&fit=crop"
+                    alt="The Power of Mindfulness" class="book-cover">
+                <div class="book-content">
+                    <h3>The Power of Mindfulness</h3>
+                    <p class="book-author">by ZenTrack Team</p>
+                    <p>A comprehensive guide to mindfulness practice that teaches you to live in the present moment and
+                        find inner
+                        peace.</p>
+                    <div class="book-tags">
+                        <span class="tag">Mindfulness</span>
+                        <span class="tag">Meditation</span>
+                        <span class="tag">Free</span>
+                    </div>
+                    <button class="read-btn">📖 Read Now (Free)</button>
+                </div>
+            </div>
+
+            <div class="book-card" onclick="window.location.href='book-reader.html?book=habits'">
+                <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600&h=700&fit=crop"
+                    alt="Atomic Habits" class="book-cover">
+                <div class="book-content">
+                    <h3>Building Better Habits</h3>
+                    <p class="book-author">by ZenTrack Team</p>
+                    <p>Learn how tiny changes can lead to remarkable results in building good habits and breaking bad
+                        ones.</p>
+                    <div class="book-tags">
+                        <span class="tag">Self-Improvement</span>
+                        <span class="tag">Productivity</span>
+                        <span class="tag">Free</span>
+                    </div>
+                    <button class="read-btn">📖 Read Now (Free)</button>
+                </div>
+            </div>
+
+            <div class="book-card" onclick="window.location.href='book-reader.html?book=meditation'">
+                <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&h=700&fit=crop"
+                    alt="Mindfulness Meditation" class="book-cover">
+                <div class="book-content">
+                    <h3>Mindfulness Meditation Guide</h3>
+                    <p class="book-author">by ZenTrack Team</p>
+                    <p>A practical guide to meditation and mindfulness practice explained in clear, simple language.</p>
+                    <div class="book-tags">
+                        <span class="tag">Meditation</span>
+                        <span class="tag">Practice</span>
+                        <span class="tag">Free</span>
+                    </div>
+                    <button class="read-btn">📖 Read Now (Free)</button>
+                </div>
+            </div>
+
+            <div class="book-card" onclick="window.location.href='book-reader.html?book=mentalhealth'">
+                <img src="https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=600&h=700&fit=crop"
+                    alt="Mental Wellness" class="book-cover">
+                <div class="book-content">
+                    <h3>Mental Wellness Guide</h3>
+                    <p class="book-author">by ZenTrack Team</p>
+                    <p>A comprehensive approach to overcome stress, anxiety and improve your mental health.</p>
+                    <div class="book-tags">
+                        <span class="tag">Mental Health</span>
+                        <span class="tag">Wellness</span>
+                        <span class="tag">Free</span>
+                    </div>
+                    <button class="read-btn">📖 Read Now (Free)</button>
+                </div>
+            </div>
+
+            <div class="book-card" onclick="window.location.href='book-reader.html?book=innerpeace'">
+                <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600&h=700&fit=crop"
+                    alt="Finding Inner Peace" class="book-cover">
+                <div class="book-content">
+                    <h3>Finding Inner Peace</h3>
+                    <p class="book-author">by ZenTrack Team</p>
+                    <p>A journey to discover inner peace and freedom from limiting thoughts and negative patterns.</p>
+                    <div class="book-tags">
+                        <span class="tag">Inner Peace</span>
+                        <span class="tag">Spirituality</span>
+                        <span class="tag">Free</span>
+                    </div>
+                    <button class="read-btn">📖 Read Now (Free)</button>
+                </div>
+            </div>
+
+            <div class="book-card" onclick="window.location.href='book-reader.html?book=dailypractice'">
+                <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=600&h=700&fit=crop"
+                    alt="Daily Mindfulness" class="book-cover">
+                <div class="book-content">
+                    <h3>Daily Mindfulness Practice</h3>
+                    <p class="book-author">by ZenTrack Team</p>
+                    <p>Mindfulness meditation in everyday life - practical wisdom for finding peace in the present
+                        moment.</p>
+                    <div class="book-tags">
+                        <span class="tag">Daily Practice</span>
+                        <span class="tag">Mindfulness</span>
+                        <span class="tag">Free</span>
+                    </div>
+                    <button class="read-btn">📖 Read Now (Free)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

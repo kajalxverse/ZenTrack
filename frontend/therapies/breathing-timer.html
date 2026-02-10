@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breathing Timer - ZenTrack</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #6B8E76 0%, #52705F 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .timer-container {
+            text-align: center;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .instruction {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .circle {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 2rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            font-weight: 800;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .circle.active {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .phase {
+            font-size: 1.5rem;
+            margin: 1rem 0;
+            font-weight: 600;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        button {
+            background: white;
+            color: #6B8E76;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: #6B8E76;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .circle {
+                width: 200px;
+                height: 200px;
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="breathing.html" class="back-btn">← Back</a>
+
+    <div class="timer-container">
+        <h1 id="title">Box Breathing</h1>
+        <p class="instruction" id="instruction">Breathe in for 4, hold for 4, out for 4, hold for 4</p>
+
+        <div class="circle" id="circle">
+            <span id="timer">4</span>
+        </div>
+
+        <div class="phase" id="phase">Ready to begin</div>
+
+        <div class="controls">
+            <button onclick="startExercise()" id="startBtn">Start</button>
+            <button onclick="stopExercise()" id="stopBtn" style="display: none;">Stop</button>
+            <button onclick="resetExercise()">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const exercise = urlParams.get('exercise') || 'box';
+
+        const exercises = {
+            box: {
+                name: 'Box Breathing',
+                instruction: 'Breathe in for 4, hold for 4, out for 4, hold for 4',
+                pattern: [
+                    { phase: 'Breathe In', duration: 4 },
+                    { phase: 'Hold', duration: 4 },
+                    { phase: 'Breathe Out', duration: 4 },
+                    { phase: 'Hold', duration: 4 }
+                ]
+            },
+            pranayama: {
+                name: 'Pranayama',
+                instruction: 'Deep breathing with controlled rhythm',
+                pattern: [
+                    { phase: 'Breathe In', duration: 4 },
+                    { phase: 'Hold', duration: 7 },
+                    { phase: 'Breathe Out', duration: 8 }
+                ]
+            },
+            '478': {
+                name: '4-7-8 Breathing',
+                instruction: 'Inhale for 4, hold for 7, exhale for 8',
+                pattern: [
+                    { phase: 'Breathe In', duration: 4 },
+                    { phase: 'Hold', duration: 7 },
+                    { phase: 'Breathe Out', duration: 8 }
+                ]
+            },
+            diaphragmatic: {
+                name: 'Diaphragmatic Breathing',
+                instruction: 'Deep belly breathing',
+                pattern: [
+                    { phase: 'Breathe In Deeply', duration: 5 },
+                    { phase: 'Hold', duration: 2 },
+                    { phase: 'Breathe Out Slowly', duration: 6 }
+                ]
+            },
+            wimhof: {
+                name: 'Wim Hof Method',
+                instruction: 'Power breathing technique',
+                pattern: [
+                    { phase: 'Breathe In Fully', duration: 2 },
+                    { phase: 'Breathe Out Naturally', duration: 2 }
+                ]
+            },
+            alternate: {
+                name: 'Alternate Nostril',
+                instruction: 'Nadi Shodhana breathing',
+                pattern: [
+                    { phase: 'Breathe In (Left)', duration: 4 },
+                    { phase: 'Hold', duration: 4 },
+                    { phase: 'Breathe Out (Right)', duration: 4 },
+                    { phase: 'Breathe In (Right)', duration: 4 },
+                    { phase: 'Hold', duration: 4 },
+                    { phase: 'Breathe Out (Left)', duration: 4 }
+                ]
+            }
+        };
+
+        const currentExercise = exercises[exercise];
+        document.getElementById('title').textContent = currentExercise.name;
+        document.getElementById('instruction').textContent = currentExercise.instruction;
+
+        let intervalId = null;
+        let currentStep = 0;
+        let timeLeft = 0;
+
+        function startExercise() {
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('stopBtn').style.display = 'inline-block';
+
+            currentStep = 0;
+            runStep();
+        }
+
+        function runStep() {
+            const step = currentExercise.pattern[currentStep];
+            timeLeft = step.duration;
+
+            document.getElementById('phase').textContent = step.phase;
+            document.getElementById('circle').classList.add('active');
+
+            intervalId = setInterval(() => {
+                document.getElementById('timer').textContent = timeLeft;
+                timeLeft--;
+
+                if (timeLeft < 0) {
+                    clearInterval(intervalId);
+                    document.getElementById('circle').classList.remove('active');
+
+                    currentStep = (currentStep + 1) % currentExercise.pattern.length;
+
+                    setTimeout(runStep, 500);
+                }
+            }, 1000);
+        }
+
+        function stopExercise() {
+            clearInterval(intervalId);
+            document.getElementById('startBtn').style.display = 'inline-block';
+            document.getElementById('stopBtn').style.display = 'none';
+            document.getElementById('circle').classList.remove('active');
+            document.getElementById('phase').textContent = 'Paused';
+        }
+
+        function resetExercise() {
+            clearInterval(intervalId);
+            document.getElementById('startBtn').style.display = 'inline-block';
+            document.getElementById('stopBtn').style.display = 'none';
+            document.getElementById('circle').classList.remove('active');
+            document.getElementById('timer').textContent = currentExercise.pattern[0].duration;
+            document.getElementById('phase').textContent = 'Ready to begin';
+            currentStep = 0;
+        }
+    </script>
+</body>
+
+</html>

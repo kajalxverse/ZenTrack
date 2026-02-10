@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progressive Relaxation - ZenTrack</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #6B8E76 0%, #52705F 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: #6B8E76;
+        }
+
+        .hero {
+            text-align: center;
+            color: white;
+            padding: 3rem 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .relaxation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .relaxation-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .relaxation-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .relaxation-content {
+            padding: 2.5rem;
+        }
+
+        .relaxation-card h3 {
+            color: #1e293b;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .relaxation-card p {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #6B8E76 0%, #52705F 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="../therapies.html" class="back-btn">← Back to Therapies</a>
+
+        <div class="hero">
+            <h1>😌 Progressive Relaxation</h1>
+            <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto;">Systematic muscle relaxation to release
+                physical tension and mental stress</p>
+        </div>
+
+        <div class="relaxation-grid">
+            <div class="relaxation-card">
+                <img src="https://images.unsplash.com/photo-1447452001602-7090c7ab2db3?w=800&h=400&fit=crop"
+                    alt="Full Body Scan" class="relaxation-image">
+                <div class="relaxation-content">
+                    <h3>💆 Full Body Scan</h3>
+                    <p>Complete progressive muscle relaxation from head to toe, releasing all tension.</p>
+                    <button class="start-btn"
+                        onclick="window.open('https://www.youtube.com/watch?v=15q-N-_kkrU', '_blank')">Start (30
+                        min)</button>
+                </div>
+            </div>
+
+            <div class="relaxation-card">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&h=400&fit=crop"
+                    alt="Head & Neck" class="relaxation-image">
+                <div class="relaxation-content">
+                    <h3>🧠 Head & Neck</h3>
+                    <p>Focus on releasing tension in the head, face, jaw, and neck muscles.</p>
+                    <button class="start-btn"
+                        onclick="window.open('https://www.youtube.com/watch?v=86HUcX8ZtAk', '_blank')">Start (10
+                        min)</button>
+                </div>
+            </div>
+
+            <div class="relaxation-card">
+                <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&h=400&fit=crop"
+                    alt="Upper Body" class="relaxation-image">
+                <div class="relaxation-content">
+                    <h3>💪 Upper Body</h3>
+                    <p>Relax shoulders, arms, chest, and upper back muscles systematically.</p>
+                    <button class="start-btn"
+                        onclick="window.open('https://www.youtube.com/watch?v=ihO02wUzgkc', '_blank')">Start (15
+                        min)</button>
+                </div>
+            </div>
+
+            <div class="relaxation-card">
+                <img src="https://images.unsplash.com/photo-1545389336-cf090694435e?w=800&h=400&fit=crop"
+                    alt="Lower Body" class="relaxation-image">
+                <div class="relaxation-content">
+                    <h3>🦵 Lower Body</h3>
+                    <p>Release tension in hips, legs, and feet through progressive relaxation.</p>
+                    <button class="start-btn"
+                        onclick="window.open('https://www.youtube.com/watch?v=QS2yDmWk0vs', '_blank')">Start (15
+                        min)</button>
+                </div>
+            </div>
+
+            <div class="relaxation-card">
+                <img src="https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=800&h=400&fit=crop"
+                    alt="Quick Release" class="relaxation-image">
+                <div class="relaxation-content">
+                    <h3>⚡ Quick Release</h3>
+                    <p>5-minute rapid tension release for busy schedules and quick stress relief.</p>
+                    <button class="start-btn"
+                        onclick="window.open('https://www.youtube.com/watch?v=z6X5oEIg6Ak', '_blank')">Start (5
+                        min)</button>
+                </div>
+            </div>
+
+            <div class="relaxation-card">
+                <img src="https://images.unsplash.com/photo-1488229297570-58520851e868?w=800&h=400&fit=crop"
+                    alt="Sleep Preparation" class="relaxation-image">
+                <div class="relaxation-content">
+                    <h3>😴 Sleep Preparation</h3>
+                    <p>Evening relaxation routine to prepare your body and mind for restful sleep.</p>
+                    <button class="start-btn"
+                        onclick="window.open('https://www.youtube.com/watch?v=aEqlQvczMJQ', '_blank')">Start (20
+                        min)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

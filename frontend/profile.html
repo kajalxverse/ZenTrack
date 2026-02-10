@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ZenTrack Profile - Manage your account and settings">
+    <title>Profile - ZenTrack</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3774/3774299.png">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./css/main.css">
+
+    <style>
+        .profile-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: var(--border-radius-lg);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .profile-section {
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .info-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: var(--primary);
+            color: white;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge.admin {
+            background: var(--error);
+        }
+
+        .stats-mini-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-mini {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+        }
+
+        .stat-mini-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-mini-label {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-logo">🧘‍♀️</span>
+            <span class="sidebar-title">ZenTrack</span>
+        </div>
+
+        <nav>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a href="dashboard.html" class="sidebar-link">
+                        <span class="sidebar-icon">🏠</span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="assessment.html" class="sidebar-link">
+                        <span class="sidebar-icon">📋</span>
+                        <span>Assessment</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="chat.html" class="sidebar-link">
+                        <span class="sidebar-icon">💬</span>
+                        <span>AI Chat</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="therapies.html" class="sidebar-link">
+                        <span class="sidebar-icon">🧘</span>
+                        <span>Therapy</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="analytics.html" class="sidebar-link">
+                        <span class="sidebar-icon">📊</span>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="profile.html" class="sidebar-link active">
+                        <span class="sidebar-icon">👤</span>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li class="sidebar-item" style="margin-top: auto;">
+                    <a href="#" class="sidebar-link" onclick="handleLogout(event)">
+                        <span class="sidebar-icon">🚪</span>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <div class="profile-container">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-avatar">👤</div>
+                <h1 style="font-size: 2rem; margin-bottom: 0.5rem;" id="profileName">User Name</h1>
+                <p style="opacity: 0.95; font-size: 1.1rem;" id="profileEmail">user@email.com</p>
+                <div style="margin-top: 1rem;" id="profileBadges"></div>
+            </div>
+
+            <!-- Profile Grid -->
+            <div class="profile-grid">
+                <!-- Account Information -->
+                <div class="profile-section">
+                    <h2 class="section-title">📋 Account Information</h2>
+                    <div class="info-row">
+                        <span class="info-label">Email Address</span>
+                        <span class="info-value" id="infoEmail">--</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Full Name</span>
+                        <span class="info-value" id="infoName">--</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Member Since</span>
+                        <span class="info-value" id="infoJoined">--</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Last Login</span>
+                        <span class="info-value" id="infoLastLogin">--</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Account Type</span>
+                        <span class="info-value" id="infoAccountType">--</span>
+                    </div>
+                </div>
+
+                <!-- Wellness Stats -->
+                <div class="profile-section">
+                    <h2 class="section-title">📊 Your Wellness Stats</h2>
+                    <div class="stats-mini-grid">
+                        <div class="stat-mini">
+                            <div class="stat-mini-value" id="statAssessments">0</div>
+                            <div class="stat-mini-label">Assessments</div>
+                        </div>
+                        <div class="stat-mini">
+                            <div class="stat-mini-value" id="statLastScore">--</div>
+                            <div class="stat-mini-label">Last Score</div>
+                        </div>
+                        <div class="stat-mini">
+                            <div class="stat-mini-value" id="statLastDate">--</div>
+                            <div class="stat-mini-label">Last Assessment</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="profile-section">
+                    <h2 class="section-title">⚙️ Quick Actions</h2>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <button class="btn btn-primary" onclick="window.location.href='assessment.html'">
+                            📋 Take New Assessment
+                        </button>
+                        <button class="btn btn-secondary" onclick="window.location.href='analytics.html'">
+                            📊 View Full Analytics
+                        </button>
+                        <button class="btn btn-secondary" onclick="window.location.href='chat.html'">
+                            💬 Chat with AI Assistant
+                        </button>
+                        <button class="btn btn-danger" onclick="confirmLogout()">
+                            🚪 Logout
+                        </button>
+                    </div>
+                </div>
+
+                <!-- About ZenTrack -->
+                <div class="profile-section">
+                    <h2 class="section-title">ℹ️ About ZenTrack</h2>
+                    <p style="color: var(--text-secondary); line-height: 1.7; margin-bottom: 1rem;">
+                        ZenTrack is your AI-powered mental wellness companion. We help you track, manage, and reduce
+                        stress through personalized assessments, therapy recommendations, and intelligent chat support.
+                    </p>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <a href="landing.html" style="color: var(--primary); font-weight: 600;">🏠 Home</a>
+                        <a href="mailto:kajal2005agarwal@gmail.com" style="color: var(--primary); font-weight: 600;">📧
+                            Contact</a>
+                        <a href="#" style="color: var(--primary); font-weight: 600;">📄 Privacy Policy</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+
+    <!-- Scripts -->
+    <script src="./js/config.js"></script>
+    <script src="./js/api.js"></script>
+    <script>
+        // Toggle Sidebar
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Handle Logout
+        function handleLogout(event) {
+            event.preventDefault();
+            confirmLogout();
+        }
+
+        // Confirm Logout
+        function confirmLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                logout();
+            }
+        }
+
+        // Format Date
+        function formatDate(dateString) {
+            if (!dateString) return '--';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Format Date Short
+        function formatDateShort(dateString) {
+            if (!dateString) return '--';
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+
+            if (diffDays === 0) return 'Today';
+            if (diffDays === 1) return 'Yesterday';
+            if (diffDays < 7) return `${diffDays} days ago`;
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        // Load Profile
+        async function loadProfile() {
+            try {
+                const result = await getMe();
+
+                if (result.success && result.data.user) {
+                    const user = result.data.user;
+
+                    // Update header
+                    document.getElementById('profileName').textContent = user.name || 'User';
+                    document.getElementById('profileEmail').textContent = user.email;
+
+                    // Update badges
+                    const badgesHtml = [];
+                    if (user.is_admin) {
+                        badgesHtml.push('<span class="badge admin">👑 Admin</span>');
+                    }
+                    if (user.has_completed_assessment) {
+                        badgesHtml.push('<span class="badge">✅ Assessed</span>');
+                    }
+                    document.getElementById('profileBadges').innerHTML = badgesHtml.join(' ');
+
+                    // Update account info
+                    document.getElementById('infoEmail').textContent = user.email;
+                    document.getElementById('infoName').textContent = user.name || 'Not set';
+                    document.getElementById('infoJoined').textContent = formatDate(user.created_at);
+                    document.getElementById('infoLastLogin').textContent = formatDate(user.last_login);
+                    document.getElementById('infoAccountType').textContent = user.is_admin ? 'Administrator' : 'Standard User';
+
+                    // Update stats
+                    document.getElementById('statAssessments').textContent = user.total_assessments || 0;
+                    document.getElementById('statLastScore').textContent =
+                        user.last_anxiety_score !== null && user.last_anxiety_score !== undefined
+                            ? user.last_anxiety_score + '%'
+                            : '--';
+                    document.getElementById('statLastDate').textContent = formatDateShort(user.last_assessment_date);
+                }
+            } catch (error) {
+                console.error('Load profile error:', error);
+            }
+        }
+
+        // Initialize
+        (async function init() {
+            const user = await initProtectedPage();
+            if (user) {
+                loadProfile();
+            }
+        })();
+    </script>
+</body>
+
+</html>
