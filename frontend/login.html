@@ -424,20 +424,30 @@
     <script src="./js/config.js"></script>
     <script src="./js/api.js"></script>
     <script>
-        // Refresh Fix
+        // Refresh Fix & Admin Redirect
         window.addEventListener('load', () => {
             const params = new URLSearchParams(window.location.search);
             if (isLoggedIn() && params.get('session') !== 'expired') {
+                const userStr = localStorage.getItem('zentrack_user');
+                if (userStr) {
+                    try {
+                        const user = JSON.parse(userStr);
+                        if (user.is_admin) {
+                            window.location.href = 'admin.html';
+                            return;
+                        }
+                    } catch (e) { }
+                }
                 window.location.href = 'dashboard.html';
             }
         });
 
+        // View Toggler
         function useForm(target) {
             const login = document.getElementById('login-form');
             const reg = document.getElementById('register-form');
-            const toast = document.getElementById('toast');
-
-            toast.style.display = 'none';
+            const toast = document.getElementById('toast'); // Assuming 'toast' is the ID for the alert-toast
+            if (toast) toast.style.display = 'none';
 
             if (target === 'login') {
                 login.style.display = 'block';
@@ -447,53 +457,64 @@
             } else {
                 login.style.display = 'none';
                 reg.style.display = 'block';
-                document.getElementById('tab-login').classList.remove('active');
                 document.getElementById('tab-reg').classList.add('active');
+                document.getElementById('tab-login').classList.remove('active');
             }
         }
 
-        function fillTest() {
-            document.getElementById('log-email').value = 'demo@zentrack.com';
-            document.getElementById('log-pass').value = 'demo123';
-        }
+        // Auth Handler
+        async function handleAuth(event, type) {
+            event.preventDefault();
 
-        async function handleAuth(e, type) {
-            e.preventDefault();
-            const toast = document.getElementById('toast');
-            const loader = document.getElementById(type === 'login' ? 'ldr-login' : 'ldr-reg');
-            const txt = document.querySelector(`#${type === 'login' ? 'btn-login' : 'btn-reg'} .txt`);
+            const ldr = document.getElementById(type === 'login' ? 'ldr-login' : 'ldr-reg');
+            const btn = document.getElementById(type === 'login' ? 'btn-login' : 'btn-reg');
+            const txt = btn.querySelector('.txt');
+            const toast = document.getElementById('toast'); // Assuming 'toast' is the ID for the alert-toast
 
-            toast.style.display = 'none';
-            loader.style.display = 'block';
-            txt.style.display = 'none';
+            const email = document.getElementById(type === 'login' ? 'log-email' : 'reg-email').value;
+            const password = document.getElementById(type === 'login' ? 'log-pass' : 'reg-pass').value;
+            const name = type === 'register' ? document.getElementById('reg-name').value : '';
+
+            ldr.style.display = 'block';
+            txt.style.opacity = '0';
+            btn.disabled = true;
 
             try {
                 let result;
                 if (type === 'login') {
-                    result = await window.login(document.getElementById('log-email').value, document.getElementById('log-pass').value);
+                    result = await login(email, password);
                 } else {
-                    result = await window.register(document.getElementById('reg-name').value, document.getElementById('reg-email').value, document.getElementById('reg-pass').value);
+                    result = await register(email, password, name);
                 }
 
-                if (result.success) {
-                    toast.textContent = "Identity Verified! Entering Dashboard...";
+                if (result.success && result.data) {
+                    toast.textContent = type === 'login' ? "Identity Verified! Entering Portal..." : "Account Created! Welcome...";
                     toast.className = "alert-toast alert-success";
                     toast.style.display = "block";
-                    setTimeout(() => window.location.href = 'dashboard.html', 1000);
+
+                    const target = result.data.user && result.data.user.is_admin ? 'admin.html' : 'dashboard.html';
+                    setTimeout(() => window.location.href = target, 1200);
                 } else {
-                    toast.textContent = result.message || "Failed. Check your details.";
+                    toast.textContent = result.error || "Access Denied. Check credentials.";
                     toast.className = "alert-toast alert-error";
                     toast.style.display = "block";
-                    loader.style.display = "none";
-                    txt.style.display = "block";
                 }
             } catch (err) {
-                toast.textContent = "Server connection lost. Is the project live?";
+                toast.textContent = "Connectivity Error. System offline.";
                 toast.className = "alert-toast alert-error";
                 toast.style.display = "block";
-                loader.style.display = "none";
-                txt.style.display = "block";
+            } finally {
+                ldr.style.display = 'none';
+                txt.style.opacity = '1';
+                btn.disabled = false;
+                setTimeout(() => { if (toast) toast.style.display = "none"; }, 4000);
             }
+        }
+
+        // Demo login helper
+        function fillTest() {
+            document.getElementById('log-email').value = 'demo@zentrack.com';
+            document.getElementById('log-pass').value = 'demo123';
         }
     </script>
 </body>
