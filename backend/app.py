@@ -80,10 +80,6 @@ data_exporter = DataExporter()
 # Setup logging
 app_logger, security_logger = setup_logging(app)
 
-# Initialize database on startup
-with app.app_context():
-    init_database()
-
 # ==================== Database Initialization ====================
 
 def init_database():
@@ -190,6 +186,10 @@ def init_database():
             db.session.add_all(sample_music)
             db.session.commit()
             print("✅ Sample music therapy added")
+
+# Initialize database on startup
+with app.app_context():
+    init_database()
 
 # ==================== Authentication Routes ====================
 
