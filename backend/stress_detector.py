@@ -63,33 +63,34 @@ class StressDetector:
     
     def _train_with_sample_data(self):
         """
-        Train model with sample HRV and assessment data
-        In production, this would use real collected data
+        Train model with sample HRV and HAM-A compliant assessment data
+        Calibrated for Hamilton Anxiety Rating Scale (0-56 range)
         """
         # Sample training data (features: mean_hr, sdnn, rmssd, lf_hf_ratio, anxiety_score)
         # Labels: 0=Low, 1=Moderate, 2=High stress
         
+        # X: [mean_hr, sdnn, rmssd, lf_hf_ratio, anxiety_score]
         X_train = np.array([
-            # Low stress samples
-            [65, 80, 75, 1.2, 5],
-            [68, 85, 78, 1.3, 6],
-            [70, 82, 76, 1.1, 7],
-            [67, 88, 80, 1.4, 5],
-            [69, 83, 77, 1.2, 6],
+            # Low stress samples (Anxiety Score: 0-17)
+            [65, 85, 80, 1.1, 5],
+            [68, 88, 82, 1.2, 10],
+            [72, 80, 75, 1.3, 14],
+            [66, 92, 85, 1.0, 8],
+            [70, 84, 78, 1.2, 16],
             
-            # Moderate stress samples
-            [75, 60, 55, 2.5, 12],
-            [78, 58, 52, 2.7, 13],
-            [76, 62, 56, 2.4, 11],
-            [80, 59, 54, 2.6, 14],
-            [77, 61, 53, 2.5, 12],
+            # Moderate stress samples (Anxiety Score: 18-24)
+            [78, 55, 50, 2.8, 19],
+            [82, 50, 45, 3.2, 22],
+            [76, 58, 52, 2.5, 18],
+            [80, 52, 48, 3.0, 23],
+            [79, 54, 49, 2.9, 21],
             
-            # High stress samples
-            [90, 35, 30, 4.5, 20],
-            [92, 32, 28, 4.8, 21],
-            [88, 38, 32, 4.3, 19],
-            [95, 30, 27, 5.0, 22],
-            [91, 34, 29, 4.6, 20]
+            # High stress samples (Anxiety Score: 25-56)
+            [92, 30, 25, 5.2, 28],
+            [95, 25, 20, 5.8, 35],
+            [88, 35, 30, 4.5, 26],
+            [98, 22, 18, 6.2, 42],
+            [91, 32, 27, 4.8, 31]
         ])
         
         y_train = np.array([
@@ -108,7 +109,7 @@ class StressDetector:
         # Save model
         self._save_model()
         
-        print("✅ Stress detection model trained successfully")
+        print("✅ Stress detection model trained successfully with HAM-A calibration")
     
     def extract_hrv_features(self, rr_intervals):
         """
@@ -178,13 +179,13 @@ class StressDetector:
         
         # If only anxiety score provided, use default HRV values
         if anxiety_score is not None and not hrv_features:
-            # Map anxiety score to estimated HRV features
-            if anxiety_score < 10:
-                hrv_features = {'mean_hr': 68, 'sdnn': 82, 'rmssd': 76, 'lf_hf_ratio': 1.2}
-            elif anxiety_score < 15:
-                hrv_features = {'mean_hr': 77, 'sdnn': 60, 'rmssd': 54, 'lf_hf_ratio': 2.5}
+            # Map anxiety score to estimated HRV features based on HAM-A
+            if anxiety_score < 18:
+                hrv_features = {'mean_hr': 68, 'sdnn': 85, 'rmssd': 80, 'lf_hf_ratio': 1.2}
+            elif anxiety_score < 25:
+                hrv_features = {'mean_hr': 78, 'sdnn': 55, 'rmssd': 50, 'lf_hf_ratio': 2.8}
             else:
-                hrv_features = {'mean_hr': 91, 'sdnn': 33, 'rmssd': 29, 'lf_hf_ratio': 4.6}
+                hrv_features = {'mean_hr': 92, 'sdnn': 30, 'rmssd': 25, 'lf_hf_ratio': 5.2}
         
         if not hrv_features:
             raise ValueError("Either hrv_features, rr_intervals, or anxiety_score must be provided")
