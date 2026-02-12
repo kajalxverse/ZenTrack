@@ -294,23 +294,22 @@
     <script src="./js/config.js"></script>
     <script src="./js/api.js"></script>
     <script>
-        // Assessment Questions
+        // Assessment Questions (Hamilton Anxiety Rating Scale - HAM-A)
         const questions = [
-            { text: "Do you often feel worried or afraid something bad will happen?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you feel nervous, tense, or find it hard to relax?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you have fears, like being alone, in the dark, in traffic, or around strangers or crowds?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you have trouble sleeping (falling asleep, staying asleep, or bad dreams)?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you find it hard to focus or remember things?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you often feel sad, lose interest in things you enjoy, or feel hopeless?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you get body pains, tight muscles, twitching, or grind your teeth?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you get strange feelings like blurred vision, ringing in your ears, hot/cold flashes, weakness, or tingling?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you notice your heart beating fast, pounding, skipping beats, or feel chest pain?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you have trouble breathing, feel short of breath, or feel like choking?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you have stomach problems (like nausea, stomach pain, constipation, diarrhea, or loss of appetite)?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you notice changes in bathroom habits or sex life (like frequent urination, low interest in sex, or changes with periods)?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you get physical stress symptoms like dry mouth, sweating, dizziness, headache, or feeling hot/cold suddenly?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you fidget, shake, pace, sigh a lot, or look tense when you are anxious?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Overall, how strong has your anxiety been this past week?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] }
+            { text: "Anxious Mood: Do you feel worried, irritable, or fear the worst will happen?", options: ["Not present [0]", "Mild [1]", "Moderate [2]", "Severe [3]", "Very Severe [4]"] },
+            { text: "Tension: Do you feel tense, restless, startle easily, or find it hard to relax?", options: ["Not present [0]", "Mild [1]", "Moderate [2]", "Severe [3]", "Very Severe [4]"] },
+            { text: "Fears: Do you have fears of the dark, strangers, crowds, or being alone?", options: ["Not present [0]", "Mild [1]", "Moderate [2]", "Severe [3]", "Very Severe [4]"] },
+            { text: "Insomnia: Do you have trouble falling asleep, staying asleep, or have nightmares?", options: ["Not present [0]", "Mild [1]", "Moderate [2]", "Severe [3]", "Very Severe [4]"] },
+            { text: "Intellectual: Do you find it hard to concentrate or have a poor memory?", options: ["Not present [0]", "Mild [1]", "Moderate [2]", "Severe [3]", "Very Severe [4]"] },
+            { text: "Depressed Mood: Have you lost interest in hobbies or feel sad/hopeless?", options: ["Not present [0]", "Mild [1]", "Moderate [2]", "Severe [3]", "Very Severe [4]"] },
+            { text: "Somatic (Muscular): Do you feel muscle pains, stiffness, or grind your teeth?", options: ["Not present [0]", "Mild [1]", "Moderate [2]", "Severe [3]", "Very Severe [4]"] },
+            { text: "Somatic (Sensory): Do you have ringing in ears, blurred vision, or hot/cold flashes?", options: ["Not present [0]", "Mild [1]", "Moderate [2]", "Severe [3]", "Very Severe [4]"] },
+            { text: "Cardiovascular: Do you notice a fast heart rate, palpitations, or chest pain?", options: ["Not present [0]", "Mild [1]", "Moderate [2]", "Severe [3]", "Very Severe [4]"] },
+            { text: "Respiratory: Do you feel pressure in your chest, sighing, or shortness of breath?", options: ["Not present [0]", "Mild [1]", "Moderate [2]", "Severe [3]", "Very Severe [4]"] },
+            { text: "Gastrointestinal: Do you have stomach pain, nausea, indigestion, or changes in bowels?", options: ["Not present [0]", "Mild [1]", "Moderate [2]", "Severe [3]", "Very Severe [4]"] },
+            { text: "Genitourinary: Do you notice frequent urination or changes in your sex life?", options: ["Not present [0]", "Mild [1]", "Moderate [2]", "Severe [3]", "Very Severe [4]"] },
+            { text: "Autonomic: Do you experience dry mouth, flushing, or excessive sweating?", options: ["Not present [0]", "Mild [1]", "Moderate [2]", "Severe [3]", "Very Severe [4]"] },
+            { text: "Behavior: Do you find yourself fidgeting, pacing, or looking tense/shaky?", options: ["Not present [0]", "Mild [1]", "Moderate [2]", "Severe [3]", "Very Severe [4]"] }
         ];
 
         let currentQuestion = 0;
@@ -369,20 +368,22 @@
             }
 
             const totalScore = answers.reduce((sum, val) => sum + (val || 0), 0);
-            const maxScore = 60; // 15 questions × 4 max score
-            const percentage = Math.round((totalScore / maxScore) * 100);
 
+            // HAM-A thresholds (0-56 max)
             let level, color;
-            if (percentage <= 25) {
-                level = 'Low Stress';
-                color = '#10b981';
-            } else if (percentage <= 50) {
+            if (totalScore <= 17) {
+                level = 'Mild Stress';
+                color = '#10b981'; // Green
+            } else if (totalScore <= 24) {
                 level = 'Moderate Stress';
-                color = '#f59e0b';
+                color = '#f59e0b'; // Amber
             } else {
                 level = 'High Stress';
-                color = '#ef4444';
+                color = '#ef4444'; // Red
             }
+
+            // Percentage for the bar
+            const percentage = Math.round((totalScore / 56) * 100);
 
             document.getElementById('realtimeStress').textContent = percentage + '%';
             document.getElementById('realtimeLevel').textContent = level;

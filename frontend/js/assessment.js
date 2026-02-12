@@ -1,30 +1,29 @@
-// ZenTrack - Anxiety Assessment Module (FIXED)
-// Sequential anxiety assessment with proper state management
+// ZenTrack - Anxiety Assessment Module (Hamilton Anxiety Rating Scale - HAM-A)
+// Standard 14-item clinical scale for evaluating anxiety severity
 
-// Anxiety assessment questions
+// Anxiety assessment questions based on HAM-A
 window.anxietyQuestions = [
-    "Do you often feel worried or afraid something bad will happen?",
-    "Do you feel nervous, tense, or find it hard to relax?",
-    "Do you have fears, like being alone, in the dark, in traffic, or around strangers or crowds?",
-    "Do you have trouble sleeping (falling asleep, staying asleep, or bad dreams)?",
-    "Do you find it hard to focus or remember things?",
-    "Do you often feel sad, lose interest in things you enjoy, or feel hopeless?",
-    "Do you get body pains, tight muscles, twitching, or grind your teeth?",
-    "Do you get strange feelings like blurred vision, ringing in your ears, hot/cold flashes, weakness, or tingling?",
-    "Do you notice your heart beating fast, pounding, skipping beats, or feel chest pain?",
-    "Do you have trouble breathing, feel short of breath, or feel like choking?",
-    "Do you have stomach problems (like nausea, stomach pain, constipation, diarrhea, or loss of appetite)?",
-    "Do you notice changes in bathroom habits or sex life (like frequent urination, low interest in sex, or changes with periods)?",
-    "Do you get physical stress symptoms like dry mouth, sweating, dizziness, headache, or feeling hot/cold suddenly?",
-    "Do you fidget, shake, pace, sigh a lot, or look tense when you are anxious?",
-    "Overall, how strong has your anxiety been this past week?"
+    "Anxious Mood: Do you feel worried, irritable, or fear the worst will happen?",
+    "Tension: Do you feel tense, restless, startle easily, or find it hard to relax?",
+    "Fears: Do you have fears of the dark, strangers, crowds, or being alone?",
+    "Insomnia: Do you have trouble falling asleep, staying asleep, or have nightmares?",
+    "Intellectual: Do you find it hard to concentrate or have a poor memory?",
+    "Depressed Mood: Have you lost interest in hobbies or feel sad/hopeless?",
+    "Somatic (Muscular): Do you feel muscle pains, stiffness, or grind your teeth?",
+    "Somatic (Sensory): Do you have ringing in ears, blurred vision, or hot/cold flashes?",
+    "Cardiovascular: Do you notice a fast heart rate, palpitations, or chest pain?",
+    "Respiratory: Do you feel pressure in your chest, sighing, or shortness of breath?",
+    "Gastrointestinal: Do you have stomach pain, nausea, indigestion, or changes in bowels?",
+    "Genitourinary: Do you notice frequent urination or changes in your sex life?",
+    "Autonomic: Do you experience dry mouth, flushing, or excessive sweating?",
+    "Behavior: Do you find yourself fidgeting, pacing, or looking tense/shaky?"
 ];
 
 window.anxietyAnswers = Array(window.anxietyQuestions.length).fill(null);
 window.currentQ = 0;
 window.assessmentCompleted = false;
 
-const answerLabels = ["Never", "Rarely", "Sometimes", "Often", "Always"];
+const answerLabels = ["Not present", "Mild", "Moderate", "Severe", "Very Severe"];
 
 function renderAnxietyQuestion() {
     // Only set inAssessment to true if not completed
@@ -148,17 +147,18 @@ function calculateAndShowResults() {
     let result = "";
     let severity = "";
 
-    if (total <= 10) {
-        result = "Minimal anxiety. Keep up your healthy habits!";
+    // Hamilton Anxiety Rating Scale (HAM-A) Interpretation
+    if (total <= 17) {
+        result = "Mild anxiety severity. Keep maintaining your wellness.";
         severity = "low";
-    } else if (total <= 20) {
-        result = "Mild anxiety. Try relaxation and self-care.";
+    } else if (total <= 24) {
+        result = "Mild to Moderate anxiety severity. Relaxation exercises recommended.";
         severity = "mild";
-    } else if (total <= 35) {
-        result = "Moderate anxiety. Consider talking to someone or using therapy tools.";
+    } else if (total <= 30) {
+        result = "Moderate to Severe anxiety. Consider professional support soon.";
         severity = "moderate";
     } else {
-        result = "Severe anxiety. Please consider reaching out to a mental health professional.";
+        result = "Severe anxiety. Please consult a mental health professional immediately.";
         severity = "high";
     }
 
@@ -167,9 +167,10 @@ function calculateAndShowResults() {
         anxietyForm.style.display = 'none';
     }
 
-    window.latestAnxietyResult = `Your score: ${total} – ${result}`;
+    window.latestAnxietyResult = `HAM-A Score: ${total}/56 – ${result}`;
 
-    let lastAnxietyScore = Math.round((total / (window.anxietyQuestions.length * 4)) * 100);
+    // Calculate percentage based on max score 56
+    let lastAnxietyScore = Math.round((total / 56) * 100);
 
     // Update stress chart
     if (window.stressChart) {
@@ -190,7 +191,7 @@ function calculateAndShowResults() {
 
     // Add to recent activity
     if (window.zenTrack && window.zenTrack.addRecentActivity) {
-        window.zenTrack.addRecentActivity(`Completed anxiety assessment - Score: ${total}`);
+        window.zenTrack.addRecentActivity(`Completed HAM-A Assessment - Score: ${total}`);
     }
 
     // IMPORTANT: Mark assessment as completed and allow navigation
@@ -205,7 +206,7 @@ function calculateAndShowResults() {
 
     // Show notification
     if (window.zenTrack && window.zenTrack.showNotification) {
-        window.zenTrack.showNotification('✅ Assessment completed! You can now navigate freely.', 'success');
+        window.zenTrack.showNotification('✅ Assessment completed using HAM-A scale!', 'success');
     }
 
     setTimeout(() => {
@@ -228,7 +229,7 @@ function calculateAndShowResults() {
                     animation: scaleIn 0.6s;">
           <h3 style="margin: 0 0 10px 0; font-size: 1.5rem;">✅ Assessment Complete</h3>
           <p style="margin: 0; font-size: 1.2rem; font-weight: 600;">${window.latestAnxietyResult}</p>
-          <p style="margin: 10px 0 0 0; font-size: 0.95rem; opacity: 0.9;">You can now access all features!</p>
+          <p style="margin: 10px 0 0 0; font-size: 0.95rem; opacity: 0.9;">Results based on Hamilton Anxiety Rating Scale</p>
         </div>
       `;
         }
@@ -245,51 +246,36 @@ function calculateAndShowResults() {
 
         window.anxietyAnswers = Array(window.anxietyQuestions.length).fill(null);
         window.currentQ = 0;
-
-        // DON'T call renderAnxietyQuestion here - it causes the bug!
-        // Only render when user explicitly starts a new assessment
     }, 800);
 }
 
-// Function to generate new questions using AI
-// SECURITY NOTE: This function has been disabled to prevent API key exposure
-// The backend uses Groq API for all AI features (chatbot, recommendations)
-// For security reasons, we use predefined questions instead of client-side AI generation
 async function generateNewQuestions() {
     console.warn('⚠️ AI question generation disabled for security reasons');
-    console.info('ℹ️ Using predefined assessment questions. Backend handles all AI features via Groq API.');
-
-    // Return null to use default questions
-    // If you need AI-generated questions, create a backend endpoint instead:
-    // POST /api/assessment/generate-questions (protected with JWT)
     return null;
 }
 
-// Function to start a new assessment (called from dashboard)
 async function startNewAssessment() {
     window.assessmentCompleted = false;
     window.zenTrackState.inAssessment = true;
 
-    // Use standard assessment questions (secure and reliable)
+    // Use standard HAM-A questions
     window.anxietyQuestions = [
-        "Do you often feel worried or afraid something bad will happen?",
-        "Do you feel nervous, tense, or find it hard to relax?",
-        "Do you have fears, like being alone, in the dark, in traffic, or around strangers or crowds?",
-        "Do you have trouble sleeping (falling asleep, staying asleep, or bad dreams)?",
-        "Do you find it hard to focus or remember things?",
-        "Do you often feel sad, lose interest in things you enjoy, or feel hopeless?",
-        "Do you get body pains, tight muscles, twitching, or grind your teeth?",
-        "Do you get strange feelings like blurred vision, ringing in your ears, hot/cold flashes, weakness, or tingling?",
-        "Do you notice your heart beating fast, pounding, skipping beats, or feel chest pain?",
-        "Do you have trouble breathing, feel short of breath, or feel like choking?",
-        "Do you have stomach problems (like nausea, stomach pain, constipation, diarrhea, or loss of appetite)?",
-        "Do you notice changes in bathroom habits or sex life (like frequent urination, low interest in sex, or changes with periods)?",
-        "Do you get physical stress symptoms like dry mouth, sweating, dizziness, headache, or feeling hot/cold suddenly?",
-        "Do you fidget, shake, pace, sigh a lot, or look tense when you are anxious?",
-        "Overall, how strong has your anxiety been this past week?"
+        "Anxious Mood: Do you feel worried, irritable, or fear the worst will happen?",
+        "Tension: Do you feel tense, restless, startle easily, or find it hard to relax?",
+        "Fears: Do you have fears of the dark, strangers, crowds, or being alone?",
+        "Insomnia: Do you have trouble falling asleep, staying asleep, or have nightmares?",
+        "Intellectual: Do you find it hard to concentrate or have a poor memory?",
+        "Depressed Mood: Have you lost interest in hobbies or feel sad/hopeless?",
+        "Somatic (Muscular): Do you feel muscle pains, stiffness, or grind your teeth?",
+        "Somatic (Sensory): Do you have ringing in ears, blurred vision, or hot/cold flashes?",
+        "Cardiovascular: Do you notice a fast heart rate, palpitations, or chest pain?",
+        "Respiratory: Do you feel pressure in your chest, sighing, or shortness of breath?",
+        "Gastrointestinal: Do you have stomach pain, nausea, indigestion, or changes in bowels?",
+        "Genitourinary: Do you notice frequent urination or changes in your sex life?",
+        "Autonomic: Do you experience dry mouth, flushing, or excessive sweating?",
+        "Behavior: Do you find yourself fidgeting, pacing, or looking tense/shaky?"
     ];
 
-    // Reset answers
     window.anxietyAnswers = Array(window.anxietyQuestions.length).fill(null);
     window.currentQ = 0;
 
@@ -298,13 +284,11 @@ async function startNewAssessment() {
         anxietyForm.style.display = '';
     }
 
-    // Show notification
-    window.zenTrack?.showNotification('📋 Starting anxiety assessment...', 'info');
+    window.zenTrack?.showNotification('📋 Starting Hamilton Anxiety Rating (HAM-A)...', 'info');
 
     renderAnxietyQuestion();
     showSection('anxietyAssessment');
 }
 
-// Export for global use
 window.startNewAssessment = startNewAssessment;
 window.generateNewQuestions = generateNewQuestions;
