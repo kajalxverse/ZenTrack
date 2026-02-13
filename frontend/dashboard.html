@@ -538,9 +538,13 @@
                 const sessionsResult = await getStressSessions(5);
                 if (sessionsResult.success && sessionsResult.data.sessions) {
                     sessionsResult.data.sessions.forEach(session => {
+                        let level = session.stress_level;
+                        if (level === 'Low') level = 'Mild';
+                        if (level === 'Moderate' || level === 'Mild to Moderate') level = 'Moderate';
+                        if (level === 'High' || level === 'Moderate to Severe' || level === 'Severe') level = 'Severe';
                         activities.push({
                             icon: '📋',
-                            title: `Completed stress assessment - ${session.stress_level} stress`,
+                            title: `Completed stress assessment - ${level}`,
                             time: new Date(session.created_at).toLocaleString()
                         });
                     });

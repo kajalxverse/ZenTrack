@@ -472,7 +472,7 @@ def assess_stress():
         
         # Update user profile
         user.has_completed_assessment = True
-        user.last_anxiety_score = prediction.get('anxiety_score', anxiety_score)
+        user.last_anxiety_score = prediction.get('anxiety_percentage', round((anxiety_score / 56) * 100))
         user.total_assessments = (user.total_assessments or 0) + 1
         user.last_assessment_date = datetime.utcnow()
         
@@ -494,7 +494,7 @@ def assess_stress():
             'stress_level': prediction['stress_level'],
             'confidence': prediction['confidence'],
             'probabilities': prediction['probabilities'],
-            'anxiety_score': prediction['anxiety_score'],
+            'anxiety_score': prediction.get('anxiety_percentage', round((anxiety_score / 56) * 100)),
             'hrv_features': hrv_features,
             'therapy_recommendation': therapy_rec,
             'message': therapy_rec['message'],
@@ -586,18 +586,26 @@ def get_stress_analytics():
         
         # Calculate analytics
         total_sessions = len(sessions)
-        stress_counts = {'Low': 0, 'Moderate': 0, 'High': 0}
+        stress_counts = {'Mild': 0, 'Moderate': 0, 'Severe': 0}
         avg_anxiety_score = 0
         
         timeline_data = []
         for session in sessions:
-            stress_counts[session.stress_level] += 1
-            avg_anxiety_score += session.anxiety_score or 0
+            # Map old levels to new ones if necessary
+            level = session.stress_level
+            if level in ['Low', 'Mild']: level = 'Mild'
+            elif level in ['Moderate', 'Mild to Moderate']: level = 'Moderate'
+            elif level in ['High', 'Moderate to Severe', 'Severe']: level = 'Severe'
+            
+            if level in stress_counts:
+                stress_counts[level] += 1
+            percentage_score = round(((session.anxiety_score or 0) / 56) * 100)
+            avg_anxiety_score += percentage_score
             
             timeline_data.append({
                 'date': session.created_at.isoformat(),
                 'stress_level': session.stress_level,
-                'anxiety_score': session.anxiety_score,
+                'anxiety_score': percentage_score,
                 'confidence': session.confidence
             })
         

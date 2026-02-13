@@ -70,26 +70,26 @@ class StressDetector:
         # Labels: 0=Low, 1=Moderate, 2=High stress
         
         X_train = np.array([
-            # Low stress samples
-            [65, 80, 75, 1.2, 5],
-            [68, 85, 78, 1.3, 6],
-            [70, 82, 76, 1.1, 7],
-            [67, 88, 80, 1.4, 5],
-            [69, 83, 77, 1.2, 6],
+            # Low stress samples (anxiety_score 0-17)
+            [65, 80, 75, 1.2, 8],
+            [68, 85, 78, 1.3, 10],
+            [70, 82, 76, 1.1, 12],
+            [67, 88, 80, 1.4, 7],
+            [69, 83, 77, 1.2, 11],
             
-            # Moderate stress samples
-            [75, 60, 55, 2.5, 12],
-            [78, 58, 52, 2.7, 13],
-            [76, 62, 56, 2.4, 11],
-            [80, 59, 54, 2.6, 14],
-            [77, 61, 53, 2.5, 12],
+            # Moderate stress samples (anxiety_score 18-24)
+            [75, 60, 55, 2.5, 19],
+            [78, 58, 52, 2.7, 21],
+            [76, 62, 56, 2.4, 20],
+            [80, 59, 54, 2.6, 23],
+            [77, 61, 53, 2.5, 22],
             
-            # High stress samples
-            [90, 35, 30, 4.5, 20],
-            [92, 32, 28, 4.8, 21],
-            [88, 38, 32, 4.3, 19],
-            [95, 30, 27, 5.0, 22],
-            [91, 34, 29, 4.6, 20]
+            # High stress samples (anxiety_score 25-56)
+            [90, 35, 30, 4.5, 32],
+            [92, 32, 28, 4.8, 35],
+            [88, 38, 32, 4.3, 30],
+            [95, 30, 27, 5.0, 40],
+            [91, 34, 29, 4.6, 31]
         ])
         
         y_train = np.array([
@@ -178,10 +178,10 @@ class StressDetector:
         
         # If only anxiety score provided, use default HRV values
         if anxiety_score is not None and not hrv_features:
-            # Map anxiety score to estimated HRV features
-            if anxiety_score < 10:
+            # Map anxiety score to estimated HRV features based on HAM-A
+            if anxiety_score < 18:
                 hrv_features = {'mean_hr': 68, 'sdnn': 82, 'rmssd': 76, 'lf_hf_ratio': 1.2}
-            elif anxiety_score < 15:
+            elif anxiety_score < 25:
                 hrv_features = {'mean_hr': 77, 'sdnn': 60, 'rmssd': 54, 'lf_hf_ratio': 2.5}
             else:
                 hrv_features = {'mean_hr': 91, 'sdnn': 33, 'rmssd': 29, 'lf_hf_ratio': 4.6}
@@ -210,7 +210,7 @@ class StressDetector:
         probabilities = self.model.predict_proba(features_scaled)[0]
         
         # Map prediction to stress level
-        stress_levels = ['Low', 'Moderate', 'High']
+        stress_levels = ['Mild', 'Moderate', 'Severe']
         stress_level = stress_levels[prediction]
         confidence = float(probabilities[prediction])
         
@@ -218,12 +218,13 @@ class StressDetector:
             'stress_level': stress_level,
             'confidence': round(confidence * 100, 2),
             'probabilities': {
-                'low': round(probabilities[0] * 100, 2),
+                'mild': round(probabilities[0] * 100, 2),
                 'moderate': round(probabilities[1] * 100, 2),
-                'high': round(probabilities[2] * 100, 2)
+                'severe': round(probabilities[2] * 100, 2)
             },
             'hrv_features': hrv_features,
             'anxiety_score': anxiety_score,
+            'anxiety_percentage': round((anxiety_score / 56) * 100) if anxiety_score is not None else 0,
             'timestamp': datetime.utcnow().isoformat()
         }
     
@@ -232,15 +233,15 @@ class StressDetector:
         Recommend therapy based on stress level
         
         Args:
-            stress_level (str): 'Low', 'Moderate', or 'High'
+            stress_level (str): 'Mild', 'Moderate', or 'Severe'
             
         Returns:
             dict: Therapy recommendations
         """
         recommendations = {
-            'Low': {
+            'Mild': {
                 'primary': 'music',
-                'message': 'Your stress level is low. Enjoy some calming music to maintain your peace.',
+                'message': 'Your stress level is mild. Enjoy some calming music to maintain your peace.',
                 'therapies': ['Music Therapy', 'Light Meditation']
             },
             'Moderate': {
@@ -248,9 +249,9 @@ class StressDetector:
                 'message': 'Your stress level is moderate. Try yoga or breathing exercises to relax.',
                 'therapies': ['Yoga Therapy', 'Breathing Exercises', 'Music Therapy']
             },
-            'High': {
+            'Severe': {
                 'primary': 'chatbot',
-                'message': 'Your stress level is high. Let\'s talk with our AI assistant for support.',
+                'message': 'Your stress level is severe. Let\'s talk with our AI assistant for support.',
                 'therapies': ['AI Chatbot Support', 'Guided Meditation', 'Breathing Exercises']
             }
         }

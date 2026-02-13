@@ -363,12 +363,7 @@
 
                 <!-- Login Portion -->
                 <div id="login-form">
-                    <div class="demo-chip" onclick="fillTest()">
-                        <div
-                            style="font-size: 10px; font-weight: 800; color: var(--zen-brown); margin-bottom: 5px; text-transform: uppercase;">
-                            Direct Access</div>
-                        <div class="demo-creds">Admin Creds: <code>demo@zentrack.com</code> / <code>demo123</code></div>
-                    </div>
+
 
                     <form onsubmit="handleAuth(event, 'login')">
                         <div class="form-group">
@@ -484,7 +479,7 @@
                 if (type === 'login') {
                     result = await login(email, password);
                 } else {
-                    result = await register(email, password, name);
+                    result = await register(name, email, password);
                 }
 
                 if (result.success && result.data) {
@@ -511,11 +506,7 @@
             }
         }
 
-        // Demo login helper
-        function fillTest() {
-            document.getElementById('log-email').value = 'demo@zentrack.com';
-            document.getElementById('log-pass').value = 'demo123';
-        }
+
     </script>
 </body>
 

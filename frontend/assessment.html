@@ -296,21 +296,20 @@
     <script>
         // Assessment Questions
         const questions = [
-            { text: "Do you often feel worried or afraid something bad will happen?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you feel nervous, tense, or find it hard to relax?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you have fears, like being alone, in the dark, in traffic, or around strangers or crowds?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you have trouble sleeping (falling asleep, staying asleep, or bad dreams)?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you feel worried, nervous, or scared something bad will happen?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you feel tense, restless, or unable to relax?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Are you afraid of things like darkness, strangers, being alone, animals, traffic, or crowds?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you have trouble sleeping (difficulty falling asleep, waking up often, bad dreams)?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
             { text: "Do you find it hard to focus or remember things?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you often feel sad, lose interest in things you enjoy, or feel hopeless?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you get body pains, tight muscles, twitching, or grind your teeth?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you get strange feelings like blurred vision, ringing in your ears, hot/cold flashes, weakness, or tingling?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you notice your heart beating fast, pounding, skipping beats, or feel chest pain?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you have trouble breathing, feel short of breath, or feel like choking?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you have stomach problems (like nausea, stomach pain, constipation, diarrhea, or loss of appetite)?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you notice changes in bathroom habits or sex life (like frequent urination, low interest in sex, or changes with periods)?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you get physical stress symptoms like dry mouth, sweating, dizziness, headache, or feeling hot/cold suddenly?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Do you fidget, shake, pace, sigh a lot, or look tense when you are anxious?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
-            { text: "Overall, how strong has your anxiety been this past week?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] }
+            { text: "Do you often feel sad, lose interest in things you enjoy or feel hopeless?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you have muscle pain, body aches, twitching, or teeth grinding?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you feel physical sensations like ringing in ears, blurred vision, hot/cold feelings, weakness, or tingling?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you have heart-related symptoms like fast heartbeat, chest pain, or feeling like you might faint?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you feel chest tightness, choking feeling, or shortness of breath?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you have stomach problems like nausea, bloating, constipation, diarrhea, or loss of appetite?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Have you noticed changes in urination patterns or sexual health?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "Do you experience sweating, dry mouth, dizziness, headache or feeling hot/cold suddenly?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] },
+            { text: "During conversation, do you appear restless, shaky, tense, or anxious?", options: ["Never [0]", "Rarely [1]", "Sometimes [2]", "Often [3]", "Always [4]"] }
         ];
 
         let currentQuestion = 0;
@@ -369,18 +368,18 @@
             }
 
             const totalScore = answers.reduce((sum, val) => sum + (val || 0), 0);
-            const maxScore = 60; // 15 questions × 4 max score
+            const maxScore = 56; // 14 questions × 4 max score
             const percentage = Math.round((totalScore / maxScore) * 100);
 
             let level, color;
-            if (percentage <= 25) {
-                level = 'Low Stress';
+            if (totalScore <= 17) {
+                level = 'Mild';
                 color = '#10b981';
-            } else if (percentage <= 50) {
-                level = 'Moderate Stress';
+            } else if (totalScore <= 24) {
+                level = 'Moderate';
                 color = '#f59e0b';
             } else {
-                level = 'High Stress';
+                level = 'Severe';
                 color = '#ef4444';
             }
 
@@ -469,30 +468,30 @@
 
             // Set icon based on level
             const icons = {
-                'Low': '😊',
+                'Mild': '😊',
                 'Moderate': '😐',
-                'High': '😰'
+                'Severe': '😰'
             };
             document.getElementById('resultIcon').textContent = icons[level] || '🎯';
 
             // Set score color
             const colors = {
-                'Low': '#10b981',
+                'Mild': '#10b981',
                 'Moderate': '#f59e0b',
-                'High': '#ef4444'
+                'Severe': '#ef4444'
             };
             const scoreElement = document.getElementById('resultScore');
             scoreElement.textContent = score + '%';
             scoreElement.style.color = colors[level] || '#667eea';
 
-            document.getElementById('resultLevel').textContent = level + ' Stress';
+            document.getElementById('resultLevel').textContent = level;
             document.getElementById('resultLevel').style.color = colors[level] || '#667eea';
 
             // Set message
             const messages = {
-                'Low': 'Great job! Your stress levels are well-managed.',
+                'Mild': 'Great job! Your stress levels are well-managed and mild.',
                 'Moderate': 'Your stress levels are moderate. Consider some relaxation techniques.',
-                'High': 'Your stress levels are high. We recommend seeking support and practicing stress management.'
+                'Severe': 'Your stress levels are severe. We recommend seeking support and practicing stress management.'
             };
             document.getElementById('resultMessage').textContent = messages[level] || 'Assessment completed.';
 
@@ -508,9 +507,9 @@
                 } else {
                     // Fallback recommendations based on stress level
                     const fallbackRecs = {
-                        'Low': ['Continue your healthy habits', 'Try calming music therapy', 'Practice light meditation'],
+                        'Mild': ['Continue your healthy habits', 'Try calming music therapy', 'Practice light meditation'],
                         'Moderate': ['Practice yoga or breathing exercises', 'Listen to relaxing music', 'Try guided meditation'],
-                        'High': ['Talk to our AI chatbot for support', 'Practice deep breathing exercises', 'Consider professional counseling']
+                        'Severe': ['Talk to our AI chatbot for support', 'Practice deep breathing exercises', 'Consider professional counseling']
                     };
                     const recs = fallbackRecs[level] || fallbackRecs['Moderate'];
                     list.innerHTML = recs.map(r => `<li>${r}</li>`).join('');

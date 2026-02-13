@@ -227,15 +227,15 @@
             <div class="distribution-grid">
                 <div class="distribution-item">
                     <div class="distribution-value low" id="lowCount">0</div>
-                    <div class="distribution-label">Low Stress</div>
+                    <div class="distribution-label">Mild</div>
                 </div>
                 <div class="distribution-item">
                     <div class="distribution-value moderate" id="moderateCount">0</div>
-                    <div class="distribution-label">Moderate Stress</div>
+                    <div class="distribution-label">Moderate</div>
                 </div>
                 <div class="distribution-item">
                     <div class="distribution-value high" id="highCount">0</div>
-                    <div class="distribution-label">High Stress</div>
+                    <div class="distribution-label">Severe</div>
                 </div>
             </div>
         </div>
@@ -316,9 +316,9 @@
                     }
 
                     // Update distribution
-                    document.getElementById('lowCount').textContent = data.stress_distribution?.Low || 0;
-                    document.getElementById('moderateCount').textContent = data.stress_distribution?.Moderate || 0;
-                    document.getElementById('highCount').textContent = data.stress_distribution?.High || 0;
+                    document.getElementById('lowCount').textContent = data.stress_distribution?.Mild || data.stress_distribution?.Low || 0;
+                    document.getElementById('moderateCount').textContent = data.stress_distribution?.Moderate || data.stress_distribution?.['Mild to Moderate'] || 0;
+                    document.getElementById('highCount').textContent = data.stress_distribution?.Severe || data.stress_distribution?.['Moderate to Severe'] || data.stress_distribution?.High || 0;
 
                     // Render charts
                     renderTimelineChart(data.timeline || []);
@@ -495,9 +495,9 @@
             }
 
             const data = [
-                distribution.Low || 0,
-                distribution.Moderate || 0,
-                distribution.High || 0
+                distribution.Mild || distribution.Low || 0,
+                distribution.Moderate || distribution['Mild to Moderate'] || 0,
+                distribution.Severe || distribution['Moderate to Severe'] || distribution.High || 0
             ];
 
             if (data.every(v => v === 0)) {
@@ -525,7 +525,7 @@
             distributionChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Low Stress', 'Moderate Stress', 'High Stress'],
+                    labels: ['Mild', 'Moderate', 'Severe'],
                     datasets: [{
                         data: data,
                         backgroundColor: [
